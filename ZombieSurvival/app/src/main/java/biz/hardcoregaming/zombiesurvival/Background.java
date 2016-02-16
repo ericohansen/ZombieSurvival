@@ -30,20 +30,6 @@ public class Background {
 	public void update(){
 		bgX += speedX;
 		bgY += speedY;
-		
-		//meant for side scrolling game, resets after a point reached.
-		if(bgX <= -2000){
-			bgX += 4000;
-		}
-		if(bgX >= 4000){
-			bgX -= 2000;
-		}
-		if(bgY <= -2000){
-			bgY += 4000;
-		}
-		if(bgY >= 4000){
-			bgY -= 2000;
-		}
 	}
 
 	public int getBgX() {
