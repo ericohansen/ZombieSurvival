@@ -3,7 +3,7 @@ package biz.hardcoregaming.zombiesurvival;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
-public class Background {
+public class Background extends GameObject{
 
 	private Bitmap image;
 	private int bgX, bgY, speedX, speedY, bgWidth, bgHeight;
@@ -19,12 +19,6 @@ public class Background {
 
 	public void draw(Canvas canvas){
 		canvas.drawBitmap(image, bgX, bgY, null);
-		if(bgX<-GamePanel.WIDTH){
-			canvas.drawBitmap(image, bgX+GamePanel.WIDTH, bgY, null);
-		}
-		if(bgY<-GamePanel.HEIGHT){
-			canvas.drawBitmap(image, bgX, bgY+GamePanel.HEIGHT, null);
-		}
 	}
 	
 	public void update(){
