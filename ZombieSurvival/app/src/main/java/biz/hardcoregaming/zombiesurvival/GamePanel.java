@@ -28,10 +28,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
     public static int screenWidth = 0;
 
     //Background information
-    private Background bg;
+    public Background bg;
 
     //Player information
-    private Player player;
+    public Player player;
 
     public GamePanel(Context context) {
         super(context);
@@ -185,8 +185,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                         player.setAngle((float) 0);
                     }
                 }
+                playerCollide();
             }
         }
+    }
+
+    public void playerCollide(){
+        if(player.getX() <= bg.getX() || (player.getX()+player.getWidth()) >= bg.getX()+2000)player.setIsCollide(true);
+        if(player.getY() <= bg.getY() || (player.getY()+player.getHeight()) >= bg.getY()+2000)player.setIsCollide(true);
     }
 
     @Override

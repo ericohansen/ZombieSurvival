@@ -16,18 +16,23 @@ public class Player extends GameObject{
     private int x;
     private int y;
 
+    private boolean isCollide = false;
+
     //angle that the player is moving towards vars
     private float angle;
     private Matrix matrix = new Matrix();
 
+    //player attributes
+    private int health;
+    private int numWeapons;
+    private boolean isSafe = false;
+
 
     //init constructor
-    public Player(Bitmap res, int w, int h, int numFrames) {
+    public Player(Bitmap res, int width, int height, int numFrames) {
         spritesheet = res;
-        x = (GamePanel.screenWidth/2) - (w/2);
-        y = (GamePanel.screenHeight/2) - (h/2);
-        int height = h;
-        int width = w;
+        x = (GamePanel.screenWidth/2) - (width/2);
+        y = (GamePanel.screenHeight/2) - (height/2);
 
         Bitmap[] image = new Bitmap[numFrames];
 
@@ -52,13 +57,23 @@ public class Player extends GameObject{
 
     //updates the sprite image and x y of player if changed
     public void update(){
-        animation.update();
-        x += dx;
-        y += dy;
+        if(!isCollide) {
+            animation.update();
+            x += dx;
+            y += dy;
+        }
     }
 
     //allows public access to angle of player
     public void setAngle(float angle){
         this.angle = angle;
+    }
+
+    public boolean isCollide() {
+        return isCollide;
+    }
+
+    public void setIsCollide(boolean isCollide) {
+        this.isCollide = isCollide;
     }
 }
