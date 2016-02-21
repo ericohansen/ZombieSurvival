@@ -29,6 +29,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
 
     //Background information
     public Background bg;
+    public Background bg2;
 
     //Player information
     public Player player;
@@ -61,6 +62,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
+        bg2.draw(canvas);
         bg.draw(canvas);
         player.draw(canvas);
     }
@@ -70,6 +72,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
 
         //creates the player and background objects
         player = new Player(BitmapFactory.decodeResource(getResources(), R.drawable.playersquare), 200, 200, 3);
+        bg2 = new Background(BitmapFactory.decodeResource(getResources(), R.drawable.treebackground), -500, -500);
         bg = new Background(BitmapFactory.decodeResource(getResources(), R.drawable.background), 0, 0);
 
         thread.setRunning(true);
@@ -84,16 +87,17 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         boolean retry = true;
-        while (retry) {
+        int counter = 0;
+        while (retry && counter<1000) {
+            counter++;
             try {
                 thread.setRunning(false);
                 thread.join();
-
+                retry = false;
             } catch (InterruptedException e) {
                 e.printStackTrace();
 
             }
-            retry = false;
         }
 
     }
@@ -113,6 +117,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
     }
 
     public void update() {
+        bg2.update();
         bg.update();
         if (bg.getSpeedX() != 0 || bg.getSpeedY() != 0)
             player.update();//stops the player sprite frames from transitioning while player not moving
@@ -136,29 +141,43 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                 if (y > 0.5) {
                     //move right
                     bg.setSpeedX(-20);
-                    if (bg.getSpeedY() != 0)
+                    bg2.setSpeedX(-20);
+                    if (bg.getSpeedY() != 0) {
                         bg.setSpeedX(-16);//slows movement speed if moving at angle
+                        bg2.setSpeedX(-16);
+                    }
                 } else if (y < -0.5) {
                     //move left
                     bg.setSpeedX(20);
-                    if (bg.getSpeedY() != 0)
+                    bg2.setSpeedX(20);
+                    if (bg.getSpeedY() != 0) {
                         bg.setSpeedX(16);//slows movement speed if moving at angle
+                        bg2.setSpeedX(16);
+                    }
                 } else {
                     bg.setSpeedX(0);
+                    bg2.setSpeedX(0);
                 }
 
                 if (x > 3.5) {
                     //move down
                     bg.setSpeedY(-20);
-                    if (bg.getSpeedX() != 0)
+                    bg2.setSpeedY(-20);
+                    if (bg.getSpeedX() != 0) {
                         bg.setSpeedY(-16);//slows movement speed if moving at angle
+                        bg2.setSpeedY(-16);
+                    }
                 } else if (x < 3.0) {
                     //move up
                     bg.setSpeedY(20);
-                    if (bg.getSpeedX() != 0)
+                    bg2.setSpeedY(20);
+                    if (bg.getSpeedX() != 0) {
                         bg.setSpeedY(16);//slows movement speed if moving at angle
+                        bg2.setSpeedY(16);
+                    }
                 } else {
                     bg.setSpeedY(0);
+                    bg2.setSpeedY(0);
                 }
 
                 //changes the direction player is moving towards based on direction background is moving
@@ -191,8 +210,25 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
     }
 
     public void playerCollide(){
-        if(player.getX() <= bg.getX() || (player.getX()+player.getWidth()) >= bg.getX()+2000)player.setIsCollide(true);
-        if(player.getY() <= bg.getY() || (player.getY()+player.getHeight()) >= bg.getY()+2000)player.setIsCollide(true);
+        System.out.println("Collide: " + bg.getBgX() + " : " + bg.getBgY() + " bg collide: " + bg.isCollide());
+        if(bg.getBgX() <= -2000){
+            player.setIsCollide(true);
+            bg.setIsCollide(true);
+            bg2.setIsCollide(true);
+        }else{
+            player.setIsCollide(false);
+            bg.setIsCollide(false);
+            bg2.setIsCollide(false);
+        }
+        if(bg.getBgY() <= -1500){
+            player.setIsCollide(true);
+            bg.setIsCollide(true);
+            bg2.setIsCollide(true);
+        }else{
+            player.setIsCollide(false);
+            bg.setIsCollide(false);
+            bg2.setIsCollide(false);
+        }
     }
 
     @Override

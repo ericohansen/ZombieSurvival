@@ -7,6 +7,8 @@ public class Background extends GameObject{
 
 	private Bitmap image;
 	private int bgX, bgY, speedX, speedY, bgWidth, bgHeight;
+
+	private boolean isCollide = false;
 	
 	//constructor
 	public Background(Bitmap res, int x, int y){
@@ -22,8 +24,10 @@ public class Background extends GameObject{
 	}
 	
 	public void update(){
-		bgX += speedX;
-		bgY += speedY;
+		if(!isCollide) {
+			bgX += speedX;
+			bgY += speedY;
+		}
 	}
 
 	public int getBgX() {
@@ -72,5 +76,13 @@ public class Background extends GameObject{
 
 	public void setBgHeight(int bgHeight) {
 		this.bgHeight = bgHeight;
+	}
+
+	public boolean isCollide() {
+		return isCollide;
+	}
+
+	public void setIsCollide(boolean isCollide) {
+		this.isCollide = isCollide;
 	}
 }
