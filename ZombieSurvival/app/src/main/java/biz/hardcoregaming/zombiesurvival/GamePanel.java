@@ -227,9 +227,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                 bg.setSpeedX(0);
                 bg2.setSpeedX(0);
             }
-        } else {//else collide is true
+        }
+
+        if(bgCollideX){//else collide is true
             //sets collide false if player within right most bound and left most bound of map
-            if (bgX + speedX + 1 >= -(2000 - centerX - playerMidX) || bgX + speedX <= centerX + playerMidX) {
+            if (bgX + speedX >= -(2000 - centerX - playerMidX) || bgX + speedX <= centerX + playerMidX) {
                 player.setIsCollide(false);
                 bg.setIsCollideX(false);
                 bg2.setIsCollideX(false);
@@ -250,9 +252,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                 bg.setSpeedY(0);
                 bg2.setSpeedY(0);
             }
-        } else {//else collide is true
+        }
+
+        if(bgCollideY) {//else collide is true
             //sets collide false if player within down most bound and up most bound of map
-            if (bgY + speedY + 1 >= -(2000 - centerY - playerMidY) || bgY + speedY <= centerY + playerMidY) {
+            if (bgY + speedY >= -(2000 - centerY - playerMidY) || bgY + speedY <= centerY + playerMidY) {
                 player.setIsCollide(false);
                 bg.setIsCollideY(false);
                 bg2.setIsCollideY(false);
