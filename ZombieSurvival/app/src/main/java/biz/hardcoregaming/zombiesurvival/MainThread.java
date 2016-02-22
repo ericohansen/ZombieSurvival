@@ -3,11 +3,8 @@ package biz.hardcoregaming.zombiesurvival;
 import android.graphics.Canvas;
 import android.view.SurfaceHolder;
 
-/**
- * Created by micha on 1/11/2016.
- */
 // this is where the main game loop goes
-public class MainThread extends Thread{
+public class MainThread extends Thread {
 
     private int FPS = 30;
     private double averageFPS;
@@ -17,8 +14,7 @@ public class MainThread extends Thread{
     private static Canvas canvas;
 
 
-    public MainThread(SurfaceHolder surfaceHolder, GamePanel gamePanel)
-    {
+    public MainThread(SurfaceHolder surfaceHolder, GamePanel gamePanel) {
         super();
         this.surfaceHolder = surfaceHolder;
         this.gamePanel = gamePanel;
@@ -26,24 +22,22 @@ public class MainThread extends Thread{
 
     // this comes from class thread
     @Override
-    public void run()
-    {
+    public void run() {
         long startTime;
         long timeMillis;
         long waitTime;
         long totalTime = 0;
         int frameCount = 0;
         // 1/30th of a second
-        long targetTime = 1000/FPS;
+        long targetTime = 1000 / FPS;
 
-        while(running)
-        {
+        while (running) {
             startTime = System.nanoTime();
             canvas = null;
 
             // try locking the canvas for pixel editing
 
-            try{
+            try {
                 canvas = this.surfaceHolder.lockCanvas();
                 synchronized (surfaceHolder) {
 
@@ -51,31 +45,28 @@ public class MainThread extends Thread{
                     this.gamePanel.draw(canvas);
 
                 }
-            }
-            catch(Exception e){}
-             finally{
-            if(canvas != null)
-            {
-                try{
-                    surfaceHolder.unlockCanvasAndPost(canvas);
+            } catch (Exception e) {
+            } finally {
+                if (canvas != null) {
+                    try {
+                        surfaceHolder.unlockCanvasAndPost(canvas);
 
+                    } catch (Exception e) {
+                    }
                 }
-                catch(Exception e){}
             }
-        }
-            timeMillis = (System.nanoTime() - startTime)/1000000;
+            timeMillis = (System.nanoTime() - startTime) / 1000000;
             waitTime = targetTime - timeMillis;
 
-            try{
+            try {
                 this.sleep(waitTime);
+            } catch (Exception ex) {
             }
-            catch(Exception ex){}
 
-            totalTime += System.nanoTime()-startTime;
+            totalTime += System.nanoTime() - startTime;
             frameCount++;
-            if(frameCount == FPS)
-            {
-                averageFPS = 1000/(totalTime/frameCount/1000000);
+            if (frameCount == FPS) {
+                averageFPS = 1000 / (totalTime / frameCount / 1000000);
                 frameCount = 0;
                 totalTime = 0;
                 //System.out.println("average " + averageFPS);
@@ -83,8 +74,7 @@ public class MainThread extends Thread{
         }
     }
 
-    public void setRunning(boolean b)
-    {
+    public void setRunning(boolean b) {
         running = b;
     }
 }

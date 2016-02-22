@@ -17,7 +17,7 @@ public class Weapon {
     private int damageDistance;
     private int damage;
 
-    public Weapon(Bitmap image, String name, String weaponType, int cost){
+    public Weapon(Bitmap image, String name, String weaponType, int cost) {
         this.image = image;
         this.name = name;
         this.weaponType = weaponType;
@@ -30,7 +30,7 @@ public class Weapon {
         damage = 100;
     }
 
-    public Weapon(Bitmap image, String name, String weaponType, int cost, int level, int magazineSize, double reloadTime, int damageDistance, int damage){
+    public Weapon(Bitmap image, String name, String weaponType, int cost, int level, int magazineSize, double reloadTime, int damageDistance, int damage) {
         this.image = image;
         this.name = name;
         this.weaponType = weaponType;

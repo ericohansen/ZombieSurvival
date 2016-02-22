@@ -3,20 +3,15 @@ package biz.hardcoregaming.zombiesurvival;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Point;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
-import android.widget.Button;
-
-import java.util.List;
 
 public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, SensorEventListener {
 
@@ -30,9 +25,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
     //Background information
     public Background bg;
     public Background bg2;
+    public boolean isBgMove = true;
+    public int speedX, speedY, moveSpeed = 15;
 
     //Player information
     public Player player;
+    public boolean isPlayerMove = true;
 
     public GamePanel(Context context) {
         super(context);
@@ -72,7 +70,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
 
         //creates the player and background objects
         player = new Player(BitmapFactory.decodeResource(getResources(), R.drawable.playersquare), 200, 200, 3);
-        bg2 = new Background(BitmapFactory.decodeResource(getResources(), R.drawable.treebackground), -500, -500);
+        bg2 = new Background(BitmapFactory.decodeResource(getResources(), R.drawable.treebackground), -1500, -1000);
         bg = new Background(BitmapFactory.decodeResource(getResources(), R.drawable.background), 0, 0);
 
         thread.setRunning(true);
@@ -88,7 +86,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
     public void surfaceDestroyed(SurfaceHolder holder) {
         boolean retry = true;
         int counter = 0;
-        while (retry && counter<1000) {
+        while (retry && counter < 1000) {
             counter++;
             try {
                 thread.setRunning(false);
@@ -108,7 +106,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
 
         //rotates player sprite based on user touch
         //takes the slope between two points and calculates the angle for player to rotate to
-        float angle = (float)Math.toDegrees(Math.atan2((event.getY()- player.getY()),(event.getX()- player.getX())));
+        float angle = (float) Math.toDegrees(Math.atan2((event.getY() - player.getY()), (event.getX() - player.getX())));
         System.out.println("ANGLE: " + angle);
         //sets the angle when finger tap
         player.setAngle(angle);
@@ -132,102 +130,186 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
             float x = event.values[0];
             float y = event.values[1];
             //float z = event.values[2];
-
             //System.out.println("Sensor X: " + x);
             //System.out.println("Sensor Y: " + y);
 
             //checks if background object exists (was getting a null reference error without this check)
             if (bg != null) {
+                //gets current speed
+                speedX = bg.getSpeedX();
+                speedY = bg.getSpeedY();
+
                 if (y > 0.5) {
                     //move right
-                    bg.setSpeedX(-20);
-                    bg2.setSpeedX(-20);
-                    if (bg.getSpeedY() != 0) {
-                        bg.setSpeedX(-16);//slows movement speed if moving at angle
-                        bg2.setSpeedX(-16);
-                    }
+                    setBgMove(-moveSpeed, speedY, 3);
+                    speedX = -moveSpeed;
                 } else if (y < -0.5) {
                     //move left
-                    bg.setSpeedX(20);
-                    bg2.setSpeedX(20);
-                    if (bg.getSpeedY() != 0) {
-                        bg.setSpeedX(16);//slows movement speed if moving at angle
-                        bg2.setSpeedX(16);
+                    setBgMove(moveSpeed, speedY, -3);
+                    speedX = moveSpeed;
+                } else {
+                    bg.setSpeedX(0);
+                    bg2.setSpeedX(0);
+                    speedX = 0;
+                }
+
+                if (x > 3.5) {
+                    //move down
+                    setBgMove(speedX, -moveSpeed, 3);
+                    speedY = -moveSpeed;
+                } else if (x < 3.0) {
+                    //move up
+                    setBgMove(speedX, moveSpeed, -3);
+                    speedY = moveSpeed;
+                } else {
+                    bg.setSpeedY(0);
+                    bg2.setSpeedY(0);
+                    speedY = 0;
+                }
+
+                playerCollide();
+
+                //changes the direction player is moving towards based on direction background is moving
+                if (speedX < 0) {
+                    if (speedY < 0) {
+                        //down right
+                        player.setAngle((float) 135);
+                    } else if (speedY > 0) {
+                        //up right
+                        player.setAngle((float) 45);
+                    } else {
+                        //right
+                        player.setAngle((float) 90);
+                    }
+                } else if (speedX > 0) {
+                    if (speedY < 0) {
+                        //down left
+                        player.setAngle((float) -135);
+                    } else if (speedY > 0) {
+                        //up left
+                        player.setAngle((float) -45);
+                    } else {
+                        //left
+                        player.setAngle((float) -90);
+                    }
+                } else {
+                    if (speedY > 0) {
+                        //up
+                        player.setAngle((float) 0);
+                    } else if (speedY < 0) {
+                        //down
+                        player.setAngle((float) 180);
+                    }
+                }
+            }
+        }
+    }
+
+    public void playerCollide() {
+        int bgX = bg.getBgX();
+        int bgY = bg.getBgY();
+        int centerX = screenWidth / 2;
+        int centerY = screenHeight / 2;
+        int playerMidX = player.getWidth() / 2;
+        int playerMidY = player.getHeight() / 2;
+        boolean bgCollideX = bg.isCollideX();
+        boolean bgCollideY = bg.isCollideY();
+
+        System.out.println("BG: " + bgX + " : " + bgY + " bg X: " + bgCollideX + " bg Y: " + bgCollideY);
+
+        if (!bgCollideX) {
+            //sets collide true if center of screen hits right most bound of map
+            //sets collide true if center of screen hits left most bound of map
+            if (bgX + speedX <= -(2000 - centerX - playerMidX) || bgX + speedX >= centerX + playerMidX) {
+                player.setIsCollide(true);
+                bg.setIsCollideX(true);
+                bg2.setIsCollideX(true);
+                bg.setSpeedX(0);
+                bg2.setSpeedX(0);
+            }
+        } else {//else collide is true
+            //sets collide false if player within right most bound and left most bound of map
+            if (bgX + speedX + 1 >= -(2000 - centerX - playerMidX) || bgX + speedX <= centerX + playerMidX) {
+                player.setIsCollide(false);
+                bg.setIsCollideX(false);
+                bg2.setIsCollideX(false);
+            }else {
+                //set background speed to 0 if collide true
+                bg.setSpeedX(0);
+                bg2.setSpeedX(0);
+            }
+
+        }
+
+        //check if background y collides with player
+        if (!bgCollideY) {
+            if (bgY + speedY <= -(2000 - centerY - playerMidY) || bgY + speedY >= centerY + playerMidY) {
+                player.setIsCollide(true);
+                bg.setIsCollideY(true);
+                bg2.setIsCollideY(true);
+                bg.setSpeedY(0);
+                bg2.setSpeedY(0);
+            }
+        } else {//else collide is true
+            //sets collide false if player within down most bound and up most bound of map
+            if (bgY + speedY + 1 >= -(2000 - centerY - playerMidY) || bgY + speedY <= centerY + playerMidY) {
+                player.setIsCollide(false);
+                bg.setIsCollideY(false);
+                bg2.setIsCollideY(false);
+            }else {
+                //set background speed to 0 if collide true
+                bg.setSpeedY(0);
+                bg2.setSpeedY(0);
+            }
+        }
+    }
+
+    //checks movement and adjust speed of background objects
+    public void setBgMove(int speedX, int speedY, int adjustment) {
+        if (isBgMove) {
+            //base case if both speeds are 0
+            if (speedX == 0 && speedY == 0) {
+                bg.setSpeedX(0);
+                bg.setSpeedY(0);
+                bg2.setSpeedY(0);
+                bg2.setSpeedX(0);
+            } else {//else speedX or speedY doesn't equal 0
+                //check for change in speed x
+                if (speedX != 0) {
+                    //checks for diagonal movement
+                    if (speedY != 0) {
+                        //adjust speed
+                        speedX += adjustment;
+                        //sets the adjusted speedX of background
+                        bg.setSpeedX(speedX);
+                        bg2.setSpeedX(speedX);
+                    } else {
+                        //sets the inputed speedX of background
+                        bg.setSpeedX(speedX);
+                        bg2.setSpeedX(speedX);
                     }
                 } else {
                     bg.setSpeedX(0);
                     bg2.setSpeedX(0);
                 }
 
-                if (x > 3.5) {
-                    //move down
-                    bg.setSpeedY(-20);
-                    bg2.setSpeedY(-20);
-                    if (bg.getSpeedX() != 0) {
-                        bg.setSpeedY(-16);//slows movement speed if moving at angle
-                        bg2.setSpeedY(-16);
-                    }
-                } else if (x < 3.0) {
-                    //move up
-                    bg.setSpeedY(20);
-                    bg2.setSpeedY(20);
-                    if (bg.getSpeedX() != 0) {
-                        bg.setSpeedY(16);//slows movement speed if moving at angle
-                        bg2.setSpeedY(16);
+                //check for change in speed y
+                if (speedY != 0) {
+                    //checks for diagonal movement
+                    if (speedX != 0) {
+                        //adjusts speed
+                        speedY += adjustment;
+                        bg.setSpeedY(speedY);
+                        bg2.setSpeedY(speedY);
+                    } else {
+                        bg.setSpeedY(speedY);
+                        bg2.setSpeedY(speedY);
                     }
                 } else {
                     bg.setSpeedY(0);
                     bg2.setSpeedY(0);
                 }
-
-                //changes the direction player is moving towards based on direction background is moving
-                if (bg.getSpeedX() < 0 && bg.getSpeedY() < 0) {
-                    //down right
-                    player.setAngle((float) 135);
-                } else if (bg.getSpeedX() > 0 && bg.getSpeedY() > 0) {
-                    //up left
-                    player.setAngle((float) -45);
-                } else if (bg.getSpeedX() > 0 && bg.getSpeedY() < 0) {
-                    //down left
-                    player.setAngle((float) -135);
-                } else if (bg.getSpeedX() < 0 && bg.getSpeedY() > 0) {
-                    //up right
-                    player.setAngle((float) 45);
-                } else {
-                    if (bg.getSpeedX() > 0) {
-                        player.setAngle((float) -90);
-                    } else if (bg.getSpeedX() < 0) {
-                        player.setAngle((float) 90);
-                    } else if (bg.getSpeedY() < 0) {
-                        player.setAngle((float) 180);
-                    } else if (bg.getSpeedY() > 0) {
-                        player.setAngle((float) 0);
-                    }
-                }
-                playerCollide();
             }
-        }
-    }
-
-    public void playerCollide(){
-        System.out.println("Collide: " + bg.getBgX() + " : " + bg.getBgY() + " bg collide: " + bg.isCollide());
-        if(bg.getBgX() <= -2000){
-            player.setIsCollide(true);
-            bg.setIsCollide(true);
-            bg2.setIsCollide(true);
-        }else{
-            player.setIsCollide(false);
-            bg.setIsCollide(false);
-            bg2.setIsCollide(false);
-        }
-        if(bg.getBgY() <= -1500){
-            player.setIsCollide(true);
-            bg.setIsCollide(true);
-            bg2.setIsCollide(true);
-        }else{
-            player.setIsCollide(false);
-            bg.setIsCollide(false);
-            bg2.setIsCollide(false);
         }
     }
 

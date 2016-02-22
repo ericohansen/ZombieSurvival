@@ -2,11 +2,9 @@ package biz.hardcoregaming.zombiesurvival;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.Paint;
 
-public class Player extends GameObject{
+public class Player extends GameObject {
 
     //Player image information
     private Bitmap spritesheet;
@@ -25,14 +23,15 @@ public class Player extends GameObject{
     //player attributes
     private int health;
     private int numWeapons;
+    private int weapon;
     private boolean isSafe = false;
 
 
     //init constructor
     public Player(Bitmap res, int width, int height, int numFrames) {
         spritesheet = res;
-        x = (GamePanel.screenWidth/2) - (width/2);
-        y = (GamePanel.screenHeight/2) - (height/2);
+        x = (GamePanel.screenWidth / 2) - (width / 2);
+        y = (GamePanel.screenHeight / 2) - (height / 2);
 
         Bitmap[] image = new Bitmap[numFrames];
 
@@ -50,14 +49,14 @@ public class Player extends GameObject{
     //resets rotation matrix, rotates to the new angle, moves image to center of screen and draws it
     public void draw(Canvas canvas) {
         matrix.reset();
-        matrix.postRotate(angle, animation.getImage().getWidth()/2, animation.getImage().getHeight()/2);
+        matrix.postRotate(angle, animation.getImage().getWidth() / 2, animation.getImage().getHeight() / 2);
         matrix.postTranslate(x, y);
         canvas.drawBitmap(animation.getImage(), matrix, null);
     }
 
     //updates the sprite image and x y of player if changed
-    public void update(){
-        if(!isCollide) {
+    public void update() {
+        if (!isCollide) {
             animation.update();
             x += dx;
             y += dy;
@@ -65,7 +64,7 @@ public class Player extends GameObject{
     }
 
     //allows public access to angle of player
-    public void setAngle(float angle){
+    public void setAngle(float angle) {
         this.angle = angle;
     }
 
