@@ -215,7 +215,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
         boolean bgCollideX = bg.isCollideX();
         boolean bgCollideY = bg.isCollideY();
 
-        System.out.println("BG: " + bgX + " : " + bgY + " bg X: " + bgCollideX + " bg Y: " + bgCollideY);
+        System.out.println("BG:(" + bgX + "," + bgY + ") speed(x,y):(" + speedX + "," + speedY + ") bg X: " + bgCollideX + " bg Y: " + bgCollideY);
 
         if (!bgCollideX) {
             //sets collide true if center of screen hits right most bound of map
@@ -231,10 +231,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
 
         if(bgCollideX){//else collide is true
             //sets collide false if player within right most bound and left most bound of map
-            if (bgX + speedX >= -(2000 - centerX - playerMidX) || bgX + speedX <= centerX + playerMidX) {
-                player.setIsCollide(false);
-                bg.setIsCollideX(false);
-                bg2.setIsCollideX(false);
+            if(bgX > 0 && speedX < 0){
+                    player.setIsCollide(false);
+                    bg.setIsCollideX(false);
+                    bg2.setIsCollideX(false);
+            }else if(bgX < 0 && speedX > 0){//player moving right
+                    player.setIsCollide(false);
+                    bg.setIsCollideX(false);
+                    bg2.setIsCollideX(false);
             }else {
                 //set background speed to 0 if collide true
                 bg.setSpeedX(0);
@@ -256,10 +260,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
 
         if(bgCollideY) {//else collide is true
             //sets collide false if player within down most bound and up most bound of map
-            if (bgY + speedY >= -(2000 - centerY - playerMidY) || bgY + speedY <= centerY + playerMidY) {
-                player.setIsCollide(false);
-                bg.setIsCollideY(false);
-                bg2.setIsCollideY(false);
+            if(bgY > 0 && speedY < 0) {
+                    player.setIsCollide(false);
+                    bg.setIsCollideY(false);
+                    bg2.setIsCollideY(false);
+            }else if(bgY < 0 && speedY > 0){
+                    player.setIsCollide(false);
+                    bg.setIsCollideY(false);
+                    bg2.setIsCollideY(false);
             }else {
                 //set background speed to 0 if collide true
                 bg.setSpeedY(0);
