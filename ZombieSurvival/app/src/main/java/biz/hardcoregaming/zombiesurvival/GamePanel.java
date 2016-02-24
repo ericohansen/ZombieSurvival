@@ -26,7 +26,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
     public Background bg;
     public Background bg2;
     public boolean isBgMove = true;
-    public int speedX, speedY, moveSpeed = 15;
+    public int speedX, speedY, moveSpeed = 20;
 
     //Player information
     public Player player;
@@ -141,11 +141,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
 
                 if (y > 0.5) {
                     //move right
-                    setBgMove(-moveSpeed, speedY, 3);
+                    setBgMove(-moveSpeed, speedY, 6);
                     speedX = -moveSpeed;
                 } else if (y < -0.5) {
                     //move left
-                    setBgMove(moveSpeed, speedY, -3);
+                    setBgMove(moveSpeed, speedY, -6);
                     speedX = moveSpeed;
                 } else {
                     bg.setSpeedX(0);
@@ -153,13 +153,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                     speedX = 0;
                 }
 
-                if (x > 3.5) {
+                if (x > 0.5) {
                     //move down
-                    setBgMove(speedX, -moveSpeed, 3);
+                    setBgMove(speedX, -moveSpeed, 6);
                     speedY = -moveSpeed;
-                } else if (x < 3.0) {
+                } else if (x < -0.5) {
                     //move up
-                    setBgMove(speedX, moveSpeed, -3);
+                    setBgMove(speedX, moveSpeed, -6);
                     speedY = moveSpeed;
                 } else {
                     bg.setSpeedY(0);
