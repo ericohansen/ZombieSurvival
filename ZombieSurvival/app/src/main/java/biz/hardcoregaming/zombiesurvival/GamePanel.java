@@ -118,6 +118,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
         return super.onTouchEvent(event);
     }
 
+    // takes two points in and returns the angle in degrees plus 90 because of the landscape view
     public float getAngle(Point p, Point target){
         return (float)Math.toDegrees(Math.atan2((target.y - p.y), (target.x - p.x))) + 90;
     }
@@ -178,8 +179,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                 }
 
                 playerCollide();
-                player.setAngle();
-                setBgMove((int) (speedX * Math.cos(player.getAngle())), (int) (speedY * (double) Math.sin(player.getAngle())));
+                player.setAngle(getAngle(center, new Point((int)(center.x - (speedX * Math.cos(player.getAngle()))), (int)(center.y - (speedY * Math.sin(player.getAngle()))))));
+                setBgMove((int) (speedX * Math.cos(player.getAngle())), (int) (speedY * Math.sin(player.getAngle())));
             }
         }
     }

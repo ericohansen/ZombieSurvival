@@ -68,7 +68,7 @@ public class Player extends GameObject {
         this.angle = angle;
     }
 
-    public float getAngle(){
+    public float getAngle() {
         return angle;
     }
 
