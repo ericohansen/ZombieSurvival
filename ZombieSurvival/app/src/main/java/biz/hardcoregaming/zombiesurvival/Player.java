@@ -68,6 +68,10 @@ public class Player extends GameObject {
         this.angle = angle;
     }
 
+    public float getAngle(){
+        return angle;
+    }
+
     public boolean isCollide() {
         return isCollide;
     }

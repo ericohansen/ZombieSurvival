@@ -3,6 +3,7 @@ package biz.hardcoregaming.zombiesurvival;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Point;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -15,7 +16,7 @@ import android.view.WindowManager;
 
 public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, SensorEventListener {
 
-
+    //Thread information
     private MainThread thread;
 
     //Screen information
@@ -26,11 +27,19 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
     public Background bg;
     public Background bg2;
     public boolean isBgMove = true;
-    public int speedX, speedY, moveSpeed = 20;
+    public int speedX, speedY, moveSpeed = 15, adjustment = 0;
+
+    //Map Objects
+    public int numEnemyOnMap = 5;
+    public Enemy[] EnemyCollection;
 
     //Player information
     public Player player;
     public boolean isPlayerMove = true;
+    public Point center = new Point(screenWidth/2, screenHeight/2);
+
+    //Game information
+    public int waveNumber = 1;
 
     public GamePanel(Context context) {
         super(context);
@@ -56,12 +65,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
         mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
-
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
         bg2.draw(canvas);
         bg.draw(canvas);
+        //draw enemy units
         player.draw(canvas);
     }
 
@@ -102,16 +111,15 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        System.out.println("X: " + event.getRawX() + " Y: " + event.getRawY());
-
         //rotates player sprite based on user touch
-        //takes the slope between two points and calculates the angle for player to rotate to
-        float angle = (float) Math.toDegrees(Math.atan2((event.getY() - player.getY()), (event.getX() - player.getX())));
-        System.out.println("ANGLE: " + angle);
-        //sets the angle when finger tap
-        player.setAngle(angle);
+        //System.out.println("Player x,y: (" + screenWidth/2 + "," + screenHeight/2 + ") :: Touch Event x,y: (" + event.getX() + "," + event.getY() + ")");
+        player.setAngle(getAngle(center, new Point((int)event.getX(), (int)event.getY())));
 
         return super.onTouchEvent(event);
+    }
+
+    public float getAngle(Point p, Point target){
+        return (float)Math.toDegrees(Math.atan2((target.y - p.y), (target.x - p.x))) + 90;
     }
 
     public void update() {
@@ -138,29 +146,31 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                 //gets current speed
                 speedX = bg.getSpeedX();
                 speedY = bg.getSpeedY();
-
+                // changes are from x onto y and y onto x because of landscape views
+                // changes move speed on player if y axis changes
                 if (y > 0.5) {
                     //move right
-                    setBgMove(-moveSpeed, speedY, 6);
-                    speedX = -moveSpeed;
+                    if(y > 2) y = 2;
+                    speedX = -moveSpeed*(int)y;
                 } else if (y < -0.5) {
                     //move left
-                    setBgMove(moveSpeed, speedY, -6);
-                    speedX = moveSpeed;
+                    if(y < -2) y = -2;
+                    speedX = -moveSpeed*(int)y;
                 } else {
                     bg.setSpeedX(0);
                     bg2.setSpeedX(0);
                     speedX = 0;
                 }
 
+                // changes move speed on player if x axis changes
                 if (x > 0.5) {
                     //move down
-                    setBgMove(speedX, -moveSpeed, 6);
-                    speedY = -moveSpeed;
+                    if(x > 2) x = 2;
+                    speedY = -moveSpeed*(int)x;
                 } else if (x < -0.5) {
                     //move up
-                    setBgMove(speedX, moveSpeed, -6);
-                    speedY = moveSpeed;
+                    if(x < -2) x = -2;
+                    speedY = -moveSpeed*(int)x;
                 } else {
                     bg.setSpeedY(0);
                     bg2.setSpeedY(0);
@@ -168,39 +178,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                 }
 
                 playerCollide();
-
-                //changes the direction player is moving towards based on direction background is moving
-                if (speedX < 0) {
-                    if (speedY < 0) {
-                        //down right
-                        player.setAngle((float) 135);
-                    } else if (speedY > 0) {
-                        //up right
-                        player.setAngle((float) 45);
-                    } else {
-                        //right
-                        player.setAngle((float) 90);
-                    }
-                } else if (speedX > 0) {
-                    if (speedY < 0) {
-                        //down left
-                        player.setAngle((float) -135);
-                    } else if (speedY > 0) {
-                        //up left
-                        player.setAngle((float) -45);
-                    } else {
-                        //left
-                        player.setAngle((float) -90);
-                    }
-                } else {
-                    if (speedY > 0) {
-                        //up
-                        player.setAngle((float) 0);
-                    } else if (speedY < 0) {
-                        //down
-                        player.setAngle((float) 180);
-                    }
-                }
+                player.setAngle();
+                setBgMove((int) (speedX * Math.cos(player.getAngle())), (int) (speedY * (double) Math.sin(player.getAngle())));
             }
         }
     }
@@ -215,12 +194,18 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
         boolean bgCollideX = bg.isCollideX();
         boolean bgCollideY = bg.isCollideY();
 
-        System.out.println("BG:(" + bgX + "," + bgY + ") speed(x,y):(" + speedX + "," + speedY + ") bg X: " + bgCollideX + " bg Y: " + bgCollideY);
+        //System.out.println("BG:(" + bgX + "," + bgY + ") speed(x,y):(" + speedX + "," + speedY + ") bg X: " + bgCollideX + " bg Y: " + bgCollideY);
 
         if (!bgCollideX) {
             //sets collide true if center of screen hits right most bound of map
             //sets collide true if center of screen hits left most bound of map
-            if (bgX + speedX <= -(2000 - centerX - playerMidX) || bgX + speedX >= centerX + playerMidX) {
+            if (bgX + speedX <= -(2000 - centerX - playerMidX)){
+                player.setIsCollide(true);
+                bg.setIsCollideX(true);
+                bg2.setIsCollideX(true);
+                bg.setSpeedX(0);
+                bg2.setSpeedX(0);
+            }else if(bgX + speedX >= centerX + playerMidX) {
                 player.setIsCollide(true);
                 bg.setIsCollideX(true);
                 bg2.setIsCollideX(true);
@@ -277,8 +262,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
     }
 
     //checks movement and adjust speed of background objects
-    public void setBgMove(int speedX, int speedY, int adjustment) {
+    public void setBgMove(int speedX, int speedY) {
         if (isBgMove) {
+            //System.out.println("speedX: " + speedX + " speedY: " + speedY);
+
             //base case if both speeds are 0
             if (speedX == 0 && speedY == 0) {
                 bg.setSpeedX(0);
@@ -288,18 +275,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
             } else {//else speedX or speedY doesn't equal 0
                 //check for change in speed x
                 if (speedX != 0) {
-                    //checks for diagonal movement
-                    if (speedY != 0) {
-                        //adjust speed
-                        speedX += adjustment;
-                        //sets the adjusted speedX of background
-                        bg.setSpeedX(speedX);
-                        bg2.setSpeedX(speedX);
-                    } else {
-                        //sets the inputed speedX of background
-                        bg.setSpeedX(speedX);
-                        bg2.setSpeedX(speedX);
-                    }
+                     //sets the inputed speedX of background
+                    bg.setSpeedX(speedX);
+                    bg2.setSpeedX(speedX);
                 } else {
                     bg.setSpeedX(0);
                     bg2.setSpeedX(0);
@@ -307,16 +285,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
 
                 //check for change in speed y
                 if (speedY != 0) {
-                    //checks for diagonal movement
-                    if (speedX != 0) {
-                        //adjusts speed
-                        speedY += adjustment;
-                        bg.setSpeedY(speedY);
-                        bg2.setSpeedY(speedY);
-                    } else {
-                        bg.setSpeedY(speedY);
-                        bg2.setSpeedY(speedY);
-                    }
+                    bg.setSpeedY(speedY);
+                    bg2.setSpeedY(speedY);
                 } else {
                     bg.setSpeedY(0);
                     bg2.setSpeedY(0);
