@@ -24,8 +24,6 @@ public class Enemy extends GameObject {
 
     //enemy attributes
     private int health;
-    private int numWeapons;
-    private int weapon;
 
 
     //init constructor

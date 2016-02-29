@@ -14,6 +14,9 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, SensorEventListener {
 
     //Thread information
@@ -27,11 +30,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
     public Background bg;
     public Background bg2;
     public boolean isBgMove = true;
-    public int speedX, speedY, moveSpeed = 15, adjustment = 0;
+    public int speedX, speedY, moveSpeed = 10;
 
     //Map Objects
     public int numEnemyOnMap = 5;
-    public Enemy[] EnemyCollection;
+    //public List<Enemy> EnemyCollection;
+    public List<Projectile> ProjectileCollection = new ArrayList<Projectile>();
 
     //Player information
     public Player player;
@@ -70,7 +74,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
         super.draw(canvas);
         bg2.draw(canvas);
         bg.draw(canvas);
-        //draw enemy units
+        //draw enemy list
+        if(ProjectileCollection.size() > 0)
+            for (Projectile proj : ProjectileCollection){
+                proj.draw(canvas);
+            }
         player.draw(canvas);
     }
 
@@ -112,9 +120,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         //rotates player sprite based on user touch
-        //System.out.println("Player x,y: (" + screenWidth/2 + "," + screenHeight/2 + ") :: Touch Event x,y: (" + event.getX() + "," + event.getY() + ")");
-        player.setAngle(getAngle(center, new Point((int)event.getX(), (int)event.getY())));
-
+        //System.out.println("Player x,y: (" + center.x + "," + center.y + ") :: Touch Event x,y: (" + event.getX() + "," + event.getY() + ")");
+        player.setAngle(getAngle(screenWidth / 2, screenHeight / 2, (int) event.getX(), (int)event.getY()));
+        //System.out.println(player.getAngle());
+        Projectile proj = new Projectile(2, 2, 100, 10, player.getAngle()-90);
+        ProjectileCollection.add(proj);
         return super.onTouchEvent(event);
     }
 
@@ -123,11 +133,27 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
         return (float)Math.toDegrees(Math.atan2((target.y - p.y), (target.x - p.x))) + 90;
     }
 
+    public float getAngle(Point p, int x, int y){
+        return (float)Math.toDegrees(Math.atan2((y - p.y), (x - p.x))) + 90;
+    }
+
+    public float getAngle(int x, int y, int tx, int ty){
+        return (float)Math.toDegrees(Math.atan2((ty - y), (tx - x))) + 90;
+    }
+
     public void update() {
         bg2.update();
         bg.update();
         if (bg.getSpeedX() != 0 || bg.getSpeedY() != 0)
             player.update();//stops the player sprite frames from transitioning while player not moving
+        if(ProjectileCollection.size() > 0)
+            for (Projectile proj : ProjectileCollection){
+                if(proj.isActive()){
+                    proj.update();
+                }else{
+                    ProjectileCollection.remove(proj);
+                }
+            }
     }
 
     @Override
@@ -179,8 +205,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                 }
 
                 playerCollide();
-                player.setAngle(getAngle(center, new Point((int)(center.x - (speedX * Math.cos(player.getAngle()))), (int)(center.y - (speedY * Math.sin(player.getAngle()))))));
-                setBgMove((int) (speedX * Math.cos(player.getAngle())), (int) (speedY * Math.sin(player.getAngle())));
+                //player.setAngle(getAngle(center, new Point((center.x - speedX), (center.y - speedY))));
+                setBgMove(speedX, speedY);
             }
         }
     }
