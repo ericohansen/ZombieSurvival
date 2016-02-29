@@ -1,6 +1,7 @@
 package biz.hardcoregaming.zombiesurvival;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,7 +20,7 @@ public class Main extends Activity {
         // set to full screen
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        setContentView(new GamePanel(this));
+        setContentView(R.layout.activity_main);
 
         //keeps the screen awake while app running
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -48,5 +49,9 @@ public class Main extends Activity {
         //}
         return true;
         //return super.onOptionsItemSelected(item);
+    }
+    public void startClick(View view){
+        Intent gameAct = new Intent(this,GameActivity.class);
+        startActivity(gameAct);
     }
 }
