@@ -12,6 +12,7 @@ import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.WindowManager;
 
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
 
     //Background information
     public Background bg;
-    public Background bg2;
+    //public Background bg2;
     public boolean isBgMove = true;
     public int speedX, speedY, moveSpeed = 10;
 
@@ -67,12 +68,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
         Sensor mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         //Sensor listener
         mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        
     }
 
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        bg2.draw(canvas);
+        //bg2.draw(canvas);
         bg.draw(canvas);
         //draw enemy list
         if(ProjectileCollection.size() > 0)
@@ -87,7 +89,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
 
         //creates the player and background objects
         player = new Player(BitmapFactory.decodeResource(getResources(), R.drawable.playersquare), 200, 200, 3);
-        bg2 = new Background(BitmapFactory.decodeResource(getResources(), R.drawable.treebackground), -1500, -1000);
+        //bg2 = new Background(BitmapFactory.decodeResource(getResources(), R.drawable.treebackground), -1500, -1000);
         bg = new Background(BitmapFactory.decodeResource(getResources(), R.drawable.background), 0, 0);
 
         thread.setRunning(true);
@@ -142,7 +144,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
     }
 
     public void update() {
-        bg2.update();
+        //bg2.update();
         bg.update();
         if (bg.getSpeedX() != 0 || bg.getSpeedY() != 0)
             player.update();//stops the player sprite frames from transitioning while player not moving
@@ -185,7 +187,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                     speedX = -moveSpeed*(int)y;
                 } else {
                     bg.setSpeedX(0);
-                    bg2.setSpeedX(0);
+                    //bg2.setSpeedX(0);
                     speedX = 0;
                 }
 
@@ -200,7 +202,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                     speedY = -moveSpeed*(int)x;
                 } else {
                     bg.setSpeedY(0);
-                    bg2.setSpeedY(0);
+                    //bg2.setSpeedY(0);
                     speedY = 0;
                 }
 
@@ -229,15 +231,15 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
             if (bgX + speedX <= -(2000 - centerX - playerMidX)){
                 player.setIsCollide(true);
                 bg.setIsCollideX(true);
-                bg2.setIsCollideX(true);
+                //bg2.setIsCollideX(true);
                 bg.setSpeedX(0);
-                bg2.setSpeedX(0);
+                //bg2.setSpeedX(0);
             }else if(bgX + speedX >= centerX + playerMidX) {
                 player.setIsCollide(true);
                 bg.setIsCollideX(true);
-                bg2.setIsCollideX(true);
+                //bg2.setIsCollideX(true);
                 bg.setSpeedX(0);
-                bg2.setSpeedX(0);
+                //bg2.setSpeedX(0);
             }
         }
 
@@ -246,15 +248,15 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
             if(bgX > 0 && speedX < 0){
                     player.setIsCollide(false);
                     bg.setIsCollideX(false);
-                    bg2.setIsCollideX(false);
+                    //bg2.setIsCollideX(false);
             }else if(bgX < 0 && speedX > 0){//player moving right
                     player.setIsCollide(false);
                     bg.setIsCollideX(false);
-                    bg2.setIsCollideX(false);
+                    //bg2.setIsCollideX(false);
             }else {
                 //set background speed to 0 if collide true
                 bg.setSpeedX(0);
-                bg2.setSpeedX(0);
+                //bg2.setSpeedX(0);
             }
 
         }
@@ -264,9 +266,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
             if (bgY + speedY <= -(2000 - centerY - playerMidY) || bgY + speedY >= centerY + playerMidY) {
                 player.setIsCollide(true);
                 bg.setIsCollideY(true);
-                bg2.setIsCollideY(true);
+                //bg2.setIsCollideY(true);
                 bg.setSpeedY(0);
-                bg2.setSpeedY(0);
+                //bg2.setSpeedY(0);
             }
         }
 
@@ -275,15 +277,15 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
             if(bgY > 0 && speedY < 0) {
                     player.setIsCollide(false);
                     bg.setIsCollideY(false);
-                    bg2.setIsCollideY(false);
+                    //bg2.setIsCollideY(false);
             }else if(bgY < 0 && speedY > 0){
                     player.setIsCollide(false);
                     bg.setIsCollideY(false);
-                    bg2.setIsCollideY(false);
+                    //bg2.setIsCollideY(false);
             }else {
                 //set background speed to 0 if collide true
                 bg.setSpeedY(0);
-                bg2.setSpeedY(0);
+                //bg2.setSpeedY(0);
             }
         }
     }
@@ -297,26 +299,26 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
             if (speedX == 0 && speedY == 0) {
                 bg.setSpeedX(0);
                 bg.setSpeedY(0);
-                bg2.setSpeedY(0);
-                bg2.setSpeedX(0);
+                //bg2.setSpeedY(0);
+                //bg2.setSpeedX(0);
             } else {//else speedX or speedY doesn't equal 0
                 //check for change in speed x
                 if (speedX != 0) {
                      //sets the inputed speedX of background
                     bg.setSpeedX(speedX);
-                    bg2.setSpeedX(speedX);
+                    //bg2.setSpeedX(speedX);
                 } else {
                     bg.setSpeedX(0);
-                    bg2.setSpeedX(0);
+                    //bg2.setSpeedX(0);
                 }
 
                 //check for change in speed y
                 if (speedY != 0) {
                     bg.setSpeedY(speedY);
-                    bg2.setSpeedY(speedY);
+                    //bg2.setSpeedY(speedY);
                 } else {
                     bg.setSpeedY(0);
-                    bg2.setSpeedY(0);
+                    //bg2.setSpeedY(0);
                 }
             }
         }
