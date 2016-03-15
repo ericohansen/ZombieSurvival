@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 
+import java.util.Random;
+
 /**
  * Created by ericohansen on 2/17/2016.
  */
@@ -29,8 +31,13 @@ public class Enemy extends GameObject {
     //init constructor
     public Enemy(Bitmap res, int width, int height, int numFrames) {
         spritesheet = res;
-        x = (GamePanel.screenWidth / 2) - (width / 2);
-        y = (GamePanel.screenHeight / 2) - (height / 2);
+        int min = 10;
+        int max = GamePanel.screenHeight;
+
+        Random r = new Random();
+        int randY = r.nextInt(max - min + 1) + min;
+        if(randY > GamePanel.screenHeight/2) x = 0;
+        y = randY;
 
         Bitmap[] image = new Bitmap[numFrames];
 

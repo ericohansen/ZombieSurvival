@@ -44,7 +44,10 @@ public class Base extends GameObject {
         canvas.drawRect(x, y, x + width, y + height, paint);
     }
 
-    public void update(){x += dx; y += dy;}
+    public void update(){
+        if(!isCollideX)x += dx;
+        if(!isCollideY)y += dy;
+    }
 
     public int getHealth() {
         return health;

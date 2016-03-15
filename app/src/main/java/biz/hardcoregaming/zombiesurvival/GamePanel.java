@@ -14,9 +14,6 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, SensorEventListener {
 
     //Thread information
@@ -35,11 +32,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
     //Map Objects
     public int numEnemyOnMap = 5;
     //public List<Enemy> EnemyCollection;
-    public List<Projectile> ProjectileCollection = new ArrayList<Projectile>();
+    private Enemy enemy;
+    public Projectile bullet = new Projectile();
 
     //Player information
     public Player player;
-    public boolean isPlayerMove = true;
     public Point center = new Point(screenWidth/2, screenHeight/2);
     private Base base;
 
@@ -78,10 +75,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
         bg.draw(canvas);
         base.draw(canvas);
         //draw enemy list
-        if(ProjectileCollection.size() > 0)
-            for (Projectile proj : ProjectileCollection){
-                proj.draw(canvas);
-            }
+        if(bullet != null)
+            if(bullet.isActive())bullet.draw(canvas);
         player.draw(canvas);
     }
 
@@ -91,8 +86,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
         //creates the player and background objects
         player = new Player(BitmapFactory.decodeResource(getResources(), R.drawable.playersquare), 200, 200, 3);
         //bg2 = new Background(BitmapFactory.decodeResource(getResources(), R.drawable.treebackground), -1500, -1000);
+        enemy = new Enemy(BitmapFactory.decodeResource(getResources(), R.drawable.zombiesprite3), 200, 200, 4);
+
         bg = new Background(0, 0);
-        base = new Base(bg.getX() + 1000, bg.getY() + 1000, 1000, 1, 400, 400);
+        base = new Base(bg.getX() + 800, bg.getY() + 800, 100, 1, 400, 400);
         thread.setRunning(true);
         thread.start();
     }
@@ -126,8 +123,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
         //System.out.println("Player x,y: (" + center.x + "," + center.y + ") :: Touch Event x,y: (" + event.getX() + "," + event.getY() + ")");
         player.setAngle(getAngle(screenWidth / 2, screenHeight / 2, (int) event.getX(), (int)event.getY()));
         //System.out.println(player.getAngle());
-        Projectile proj = new Projectile(2, 2, 300, 10, player.getAngle()-90);
-        ProjectileCollection.add(proj);
+        if(bullet != null) {
+            //System.out.println("Not Null");
+            if (!bullet.isActive()) {
+                bullet = new Projectile(2, 2, 300, 10, player.getAngle() - 90);
+                //System.out.println("Is Active");
+            }
+        }
+        //System.out.println("NULL");
         return super.onTouchEvent(event);
     }
 
@@ -150,14 +153,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
         base.update();
         if (bg.getSpeedX() != 0 || bg.getSpeedY() != 0)
             player.update();//stops the player sprite frames from transitioning while player not moving
-        if(ProjectileCollection.size() > 0)
-            for (Projectile proj : ProjectileCollection){
-                if(proj.isActive()){
-                    proj.update();
-                }else{
-                    ProjectileCollection.remove(proj);
-                }
-            }
+        if(bullet != null)bullet.update();
     }
 
     @Override
@@ -233,14 +229,18 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
             if (bgX + speedX <= -(2000 - centerX - playerMidX)){
                 player.setIsCollide(true);
                 bg.setIsCollideX(true);
+                base.setIsCollideX(true);
                 //bg2.setIsCollideX(true);
                 bg.setSpeedX(0);
+                base.setDx(0);
                 //bg2.setSpeedX(0);
             }else if(bgX + speedX >= centerX + playerMidX) {
                 player.setIsCollide(true);
                 bg.setIsCollideX(true);
+                base.setIsCollideX(true);
                 //bg2.setIsCollideX(true);
                 bg.setSpeedX(0);
+                base.setDx(0);
                 //bg2.setSpeedX(0);
             }
         }
@@ -249,15 +249,18 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
             //sets collide false if player within right most bound and left most bound of map
             if(bgX > 0 && speedX < 0){
                     player.setIsCollide(false);
-                    bg.setIsCollideX(false);
+                bg.setIsCollideX(false);
+                    base.setIsCollideX(false);
                     //bg2.setIsCollideX(false);
             }else if(bgX < 0 && speedX > 0){//player moving right
                     player.setIsCollide(false);
-                    bg.setIsCollideX(false);
+                bg.setIsCollideX(false);
+                    base.setIsCollideX(false);
                     //bg2.setIsCollideX(false);
             }else {
                 //set background speed to 0 if collide true
                 bg.setSpeedX(0);
+                base.setDx(0);
                 //bg2.setSpeedX(0);
             }
 
@@ -268,8 +271,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
             if (bgY + speedY <= -(2000 - centerY - playerMidY) || bgY + speedY >= centerY + playerMidY) {
                 player.setIsCollide(true);
                 bg.setIsCollideY(true);
+                base.setIsCollideY(true);
                 //bg2.setIsCollideY(true);
                 bg.setSpeedY(0);
+                base.setDy(0);
                 //bg2.setSpeedY(0);
             }
         }
@@ -278,15 +283,18 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
             //sets collide false if player within down most bound and up most bound of map
             if(bgY > 0 && speedY < 0) {
                     player.setIsCollide(false);
-                    bg.setIsCollideY(false);
+                bg.setIsCollideY(false);
+                    base.setIsCollideY(false);
                     //bg2.setIsCollideY(false);
             }else if(bgY < 0 && speedY > 0){
                     player.setIsCollide(false);
-                    bg.setIsCollideY(false);
+                bg.setIsCollideY(false);
+                    base.setIsCollideY(false);
                     //bg2.setIsCollideY(false);
             }else {
                 //set background speed to 0 if collide true
                 bg.setSpeedY(0);
+                base.setDy(0);
                 //bg2.setSpeedY(0);
             }
         }

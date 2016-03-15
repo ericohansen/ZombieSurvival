@@ -12,16 +12,27 @@ public class Projectile extends GameObject {
     private int speed;
     private int damage;
     private float angle;
-    private boolean isActive = true;
+    private boolean isActive = false;
     private int width, height;
 
     public Projectile(int width, int height, int speed, int damage, float angle){
+        x = GamePanel.screenWidth/2;
+        y = GamePanel.screenHeight/2;
         this.width = width;
         this.height = height;
         this.speed = speed;
         this.damage = damage;
         this.angle = angle;
+        isActive = true;
         setMoveAngleBools();
+    }
+
+    public Projectile(){
+        x = GamePanel.screenWidth/2;
+        y = GamePanel.screenHeight/2;
+        this.width = 2;
+        this.height = 2;
+        isActive = false;
     }
 
     // sets the amount of x and y change based on angle of bullet/projectile
@@ -39,6 +50,7 @@ public class Projectile extends GameObject {
 
     public void update(){
         if(isActive){
+            //System.out.println("Bullet X: " + x + ": " + y);
             x += sx;
             y += sy;
         }
