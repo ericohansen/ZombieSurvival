@@ -33,11 +33,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
     public int numEnemyOnMap = 5;
     //public List<Enemy> EnemyCollection;
     private Enemy enemy;
+
+    //Projectile information
     public Projectile bullet = new Projectile();
 
     //Player information
     public Player player;
-    public Point center = new Point(screenWidth/2, screenHeight/2);
+
+    //Base information
     private Base base;
 
     //Game information
@@ -74,6 +77,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
         //bg2.draw(canvas);
         bg.draw(canvas);
         base.draw(canvas);
+        enemy.draw(canvas);
         //draw enemy list
         if(bullet != null)
             if(bullet.isActive())bullet.draw(canvas);
@@ -134,15 +138,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
         return super.onTouchEvent(event);
     }
 
-    // takes two points in and returns the angle in degrees plus 90 because of the landscape view
-    public float getAngle(Point p, Point target){
-        return (float)Math.toDegrees(Math.atan2((target.y - p.y), (target.x - p.x))) + 90;
-    }
-
-    public float getAngle(Point p, int x, int y){
-        return (float)Math.toDegrees(Math.atan2((y - p.y), (x - p.x))) + 90;
-    }
-
     public float getAngle(int x, int y, int tx, int ty){
         return (float)Math.toDegrees(Math.atan2((ty - y), (tx - x))) + 90;
     }
@@ -151,6 +146,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
         //bg2.update();
         bg.update();
         base.update();
+
+        enemy.setAngle(getAngle(enemy.getX() + bg.getBgX(), enemy.getY() + bg.getBgX(), player.getX() + bg.getBgX(), player.getY() + bg.getBgY()));
+        enemy.update();
+
         if (bg.getSpeedX() != 0 || bg.getSpeedY() != 0)
             player.update();//stops the player sprite frames from transitioning while player not moving
         if(bullet != null)bullet.update();
@@ -230,38 +229,49 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                 player.setIsCollide(true);
                 bg.setIsCollideX(true);
                 base.setIsCollideX(true);
-                //bg2.setIsCollideX(true);
+
+                enemy.setBgCollideX(true);
+
                 bg.setSpeedX(0);
                 base.setDx(0);
-                //bg2.setSpeedX(0);
+
+                enemy.setDx(0);
             }else if(bgX + speedX >= centerX + playerMidX) {
                 player.setIsCollide(true);
                 bg.setIsCollideX(true);
                 base.setIsCollideX(true);
-                //bg2.setIsCollideX(true);
+
+                enemy.setBgCollideX(true);
+
                 bg.setSpeedX(0);
                 base.setDx(0);
-                //bg2.setSpeedX(0);
+                player.setDx(0);
+
+                enemy.setDx(0);
             }
         }
 
         if(bgCollideX){//else collide is true
             //sets collide false if player within right most bound and left most bound of map
             if(bgX > 0 && speedX < 0){
-                    player.setIsCollide(false);
+                player.setIsCollide(false);
                 bg.setIsCollideX(false);
-                    base.setIsCollideX(false);
-                    //bg2.setIsCollideX(false);
+                base.setIsCollideX(false);
+
+                enemy.setBgCollideX(false);
             }else if(bgX < 0 && speedX > 0){//player moving right
-                    player.setIsCollide(false);
+                player.setIsCollide(false);
                 bg.setIsCollideX(false);
-                    base.setIsCollideX(false);
-                    //bg2.setIsCollideX(false);
+                base.setIsCollideX(false);
+
+                enemy.setBgCollideX(false);
             }else {
                 //set background speed to 0 if collide true
+                player.setDx(0);
                 bg.setSpeedX(0);
                 base.setDx(0);
-                //bg2.setSpeedX(0);
+
+                enemy.setDx(0);
             }
 
         }
@@ -272,30 +282,38 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                 player.setIsCollide(true);
                 bg.setIsCollideY(true);
                 base.setIsCollideY(true);
-                //bg2.setIsCollideY(true);
+
+                enemy.setBgCollideY(true);
+
+                player.setDy(0);
                 bg.setSpeedY(0);
                 base.setDy(0);
-                //bg2.setSpeedY(0);
+
+                enemy.setDy(0);
             }
         }
 
         if(bgCollideY) {//else collide is true
             //sets collide false if player within down most bound and up most bound of map
             if(bgY > 0 && speedY < 0) {
-                    player.setIsCollide(false);
+                player.setIsCollide(false);
                 bg.setIsCollideY(false);
-                    base.setIsCollideY(false);
-                    //bg2.setIsCollideY(false);
+                base.setIsCollideY(false);
+
+                enemy.setBgCollideY(false);
             }else if(bgY < 0 && speedY > 0){
-                    player.setIsCollide(false);
+                player.setIsCollide(false);
                 bg.setIsCollideY(false);
-                    base.setIsCollideY(false);
-                    //bg2.setIsCollideY(false);
+                base.setIsCollideY(false);
+
+                enemy.setBgCollideY(false);
             }else {
                 //set background speed to 0 if collide true
+                player.setDy(0);
                 bg.setSpeedY(0);
                 base.setDy(0);
-                //bg2.setSpeedY(0);
+
+                enemy.setDy(0);
             }
         }
     }
@@ -311,30 +329,43 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                 bg.setSpeedY(0);
                 base.setDx(0);
                 base.setDy(0);
-                //bg2.setSpeedY(0);
-                //bg2.setSpeedX(0);
+                //set player x y speeds
+                player.setDx(0);
+                player.setDy(0);
+                //set enemy x y speeds
+                enemy.setDx(0);
+                enemy.setDy(0);
+
             } else {//else speedX or speedY doesn't equal 0
                 //check for change in speed x
                 if (speedX != 0) {
                      //sets the inputed speedX of background
                     bg.setSpeedX(speedX);
                     base.setDx(speedX);
-                    //bg2.setSpeedX(speedX);
+                    player.setDx(speedX);
+
+                    enemy.setDx(speedX);
                 } else {
                     bg.setSpeedX(0);
                     base.setDx(0);
-                    //bg2.setSpeedX(0);
+                    player.setDx(0);
+
+                    enemy.setDx(0);
                 }
 
                 //check for change in speed y
                 if (speedY != 0) {
                     bg.setSpeedY(speedY);
                     base.setDy(speedY);
-                    //bg2.setSpeedY(speedY);
+                    player.setDy(speedY);
+
+                    enemy.setDy(speedY);
                 } else {
                     bg.setSpeedY(0);
                     base.setDy(0);
-                    //bg2.setSpeedY(0);
+                    player.setDy(0);
+
+                    enemy.setDy(0);
                 }
             }
         }

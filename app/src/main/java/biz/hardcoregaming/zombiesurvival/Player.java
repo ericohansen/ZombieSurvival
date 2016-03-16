@@ -13,6 +13,8 @@ public class Player extends GameObject {
     //position of player on screen vars
     private int x;
     private int y;
+    private int trueX;
+    private int trueY;
 
     private boolean isCollide = false;
 
@@ -32,7 +34,8 @@ public class Player extends GameObject {
         spritesheet = res;
         x = (GamePanel.screenWidth / 2) - (width / 2);
         y = (GamePanel.screenHeight / 2) - (height / 2);
-
+        trueX = x;
+        trueY = y;
         Bitmap[] image = new Bitmap[numFrames];
 
         //creates the sprite frames for animations
@@ -58,8 +61,8 @@ public class Player extends GameObject {
     public void update() {
         if (!isCollide) {
             animation.update();
-            x += dx;
-            y += dy;
+            trueX += dx;
+            trueY += dy;
         }
     }
 
@@ -79,4 +82,10 @@ public class Player extends GameObject {
     public void setIsCollide(boolean isCollide) {
         this.isCollide = isCollide;
     }
+
+    @Override
+    public int getX(){return trueX;}
+
+    @Override
+    public int getY(){return trueY;}
 }

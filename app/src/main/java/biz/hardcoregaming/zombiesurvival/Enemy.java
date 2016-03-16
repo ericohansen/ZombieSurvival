@@ -19,6 +19,8 @@ public class Enemy extends GameObject {
     private int y;
 
     private boolean isCollide = false;
+    private boolean bgCollideX = false;
+    private boolean bgCollideY = false;
 
     //angle that the enemy is moving towards vars
     private float angle;
@@ -31,12 +33,16 @@ public class Enemy extends GameObject {
     //init constructor
     public Enemy(Bitmap res, int width, int height, int numFrames) {
         spritesheet = res;
-        int min = 10;
-        int max = GamePanel.screenHeight;
+        int min = 50;
+        int max = GamePanel.screenHeight - 50;
 
         Random r = new Random();
         int randY = r.nextInt(max - min + 1) + min;
-        if(randY > GamePanel.screenHeight/2) x = 0;
+        if(randY > GamePanel.screenHeight/2){
+            x = 10;
+        }else{
+            x = GamePanel.screenWidth - 10;
+        }
         y = randY;
 
         Bitmap[] image = new Bitmap[numFrames];
@@ -58,14 +64,17 @@ public class Enemy extends GameObject {
         matrix.postRotate(angle, animation.getImage().getWidth() / 2, animation.getImage().getHeight() / 2);
         matrix.postTranslate(x, y);
         canvas.drawBitmap(animation.getImage(), matrix, null);
+        System.out.println("Enemy angle: " + angle);
     }
 
     //updates the sprite image and x y of player if changed
     public void update() {
         if (!isCollide) {
             animation.update();
-            x += dx;
-            y += dy;
+            if(!isCollideX)
+                x += dx;
+            if(!isCollideY)
+                y += dy;
         }
     }
 
@@ -80,5 +89,21 @@ public class Enemy extends GameObject {
 
     public void setIsCollide(boolean isCollide) {
         this.isCollide = isCollide;
+    }
+
+    public boolean isBgCollideY() {
+        return bgCollideY;
+    }
+
+    public void setBgCollideY(boolean bgCollideY) {
+        this.bgCollideY = bgCollideY;
+    }
+
+    public boolean isBgCollideX() {
+        return bgCollideX;
+    }
+
+    public void setBgCollideX(boolean bgCollideX) {
+        this.bgCollideX = bgCollideX;
     }
 }
