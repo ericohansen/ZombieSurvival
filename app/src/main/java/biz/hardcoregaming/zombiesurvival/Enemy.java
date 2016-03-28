@@ -14,10 +14,6 @@ public class Enemy extends GameObject {
     private Bitmap spritesheet;
     private Animation animation = new Animation();
 
-    //position of player on screen vars
-    private int x;
-    private int y;
-
     private boolean isCollide = false;
     private boolean bgCollideX = false;
     private boolean bgCollideY = false;
@@ -39,11 +35,11 @@ public class Enemy extends GameObject {
         Random r = new Random();
         int randY = r.nextInt(max - min + 1) + min;
         if(randY > GamePanel.screenHeight/2){
-            x = 10;
+            this.x = 10;
         }else{
-            x = GamePanel.screenWidth - 10;
+            this.x = GamePanel.screenWidth - 10;
         }
-        y = randY;
+        this.y = randY;
 
         Bitmap[] image = new Bitmap[numFrames];
 
@@ -64,12 +60,12 @@ public class Enemy extends GameObject {
         matrix.postRotate(angle, animation.getImage().getWidth() / 2, animation.getImage().getHeight() / 2);
         matrix.postTranslate(x, y);
         canvas.drawBitmap(animation.getImage(), matrix, null);
-        System.out.println("Enemy angle: " + angle);
+        //System.out.println("Enemy angle: " + angle);
     }
 
     //updates the sprite image and x y of player if changed
     public void update() {
-        if (!isCollide) {
+        if (isAlive) {
             animation.update();
             if(!isCollideX)
                 x += dx;

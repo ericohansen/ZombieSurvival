@@ -146,7 +146,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
         //bg2.update();
         bg.update();
         base.update();
-
+        System.out.println("E: " + enemy.getX() + ":" + enemy.getY() + " P: " + player.getX() + ":" + player.getY());
         enemy.setAngle(getAngle(enemy.getX() + bg.getBgX(), enemy.getY() + bg.getBgX(), player.getX() + bg.getBgX(), player.getY() + bg.getBgY()));
         enemy.update();
 
@@ -226,7 +226,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
             //sets collide true if center of screen hits right most bound of map
             //sets collide true if center of screen hits left most bound of map
             if (bgX + speedX <= -(2000 - centerX - playerMidX)){
-                player.setIsCollide(true);
+                player.setIsCollideX(true);
                 bg.setIsCollideX(true);
                 base.setIsCollideX(true);
 
@@ -237,7 +237,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
 
                 enemy.setDx(0);
             }else if(bgX + speedX >= centerX + playerMidX) {
-                player.setIsCollide(true);
+                player.setIsCollideX(true);
                 bg.setIsCollideX(true);
                 base.setIsCollideX(true);
 
@@ -254,13 +254,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
         if(bgCollideX){//else collide is true
             //sets collide false if player within right most bound and left most bound of map
             if(bgX > 0 && speedX < 0){
-                player.setIsCollide(false);
+                player.setIsCollideX(false);
                 bg.setIsCollideX(false);
                 base.setIsCollideX(false);
 
                 enemy.setBgCollideX(false);
             }else if(bgX < 0 && speedX > 0){//player moving right
-                player.setIsCollide(false);
+                player.setIsCollideX(false);
                 bg.setIsCollideX(false);
                 base.setIsCollideX(false);
 
@@ -279,7 +279,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
         //check if background y collides with player
         if (!bgCollideY) {
             if (bgY + speedY <= -(2000 - centerY - playerMidY) || bgY + speedY >= centerY + playerMidY) {
-                player.setIsCollide(true);
+                player.setIsCollideY(true);
                 bg.setIsCollideY(true);
                 base.setIsCollideY(true);
 
@@ -296,13 +296,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
         if(bgCollideY) {//else collide is true
             //sets collide false if player within down most bound and up most bound of map
             if(bgY > 0 && speedY < 0) {
-                player.setIsCollide(false);
+                player.setIsCollideY(false);
                 bg.setIsCollideY(false);
                 base.setIsCollideY(false);
 
                 enemy.setBgCollideY(false);
             }else if(bgY < 0 && speedY > 0){
-                player.setIsCollide(false);
+                player.setIsCollideY(false);
                 bg.setIsCollideY(false);
                 base.setIsCollideY(false);
 
@@ -342,7 +342,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                      //sets the inputed speedX of background
                     bg.setSpeedX(speedX);
                     base.setDx(speedX);
-                    player.setDx(speedX);
+                    player.setDx(-speedX);
 
                     enemy.setDx(speedX);
                 } else {
@@ -357,7 +357,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                 if (speedY != 0) {
                     bg.setSpeedY(speedY);
                     base.setDy(speedY);
-                    player.setDy(speedY);
+                    player.setDy(-speedY);
 
                     enemy.setDy(speedY);
                 } else {

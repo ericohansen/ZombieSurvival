@@ -10,9 +10,6 @@ public class Player extends GameObject {
     private Bitmap spritesheet;
     private Animation animation = new Animation();
 
-    //position of player on screen vars
-    private int x;
-    private int y;
     private int trueX;
     private int trueY;
 
@@ -32,8 +29,8 @@ public class Player extends GameObject {
     //init constructor
     public Player(Bitmap res, int width, int height, int numFrames) {
         spritesheet = res;
-        x = (GamePanel.screenWidth / 2) - (width / 2);
-        y = (GamePanel.screenHeight / 2) - (height / 2);
+        this.x = (GamePanel.screenWidth / 2) - (width / 2);
+        this.y = (GamePanel.screenHeight / 2) - (height / 2);
         trueX = x;
         trueY = y;
         Bitmap[] image = new Bitmap[numFrames];
@@ -59,11 +56,9 @@ public class Player extends GameObject {
 
     //updates the sprite image and x y of player if changed
     public void update() {
-        if (!isCollide) {
-            animation.update();
-            trueX += dx;
-            trueY += dy;
-        }
+        if (!isCollideX)trueX += dx;
+        if (!isCollideY)trueY += dy;
+        animation.update();
     }
 
     //allows public access to angle of player
