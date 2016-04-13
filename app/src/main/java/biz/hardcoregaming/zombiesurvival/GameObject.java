@@ -15,6 +15,7 @@ public abstract class GameObject {
     protected boolean isCollideX = false;
     protected boolean isCollideY = false;
     protected boolean isAlive = true;
+    protected int health = 100;
 
     public Rect getRectangle() {
         return new Rect(x, y, x + width, y + height);
@@ -90,5 +91,13 @@ public abstract class GameObject {
 
     public void setIsAlive(boolean isAlive) {
         this.isAlive = isAlive;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public void setHealth(int health) {
+        this.health += health;
     }
 }

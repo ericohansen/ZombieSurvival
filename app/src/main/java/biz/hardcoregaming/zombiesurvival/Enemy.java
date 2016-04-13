@@ -14,17 +14,9 @@ public class Enemy extends GameObject {
     private Bitmap spritesheet;
     private Animation animation = new Animation();
 
-    private boolean isCollide = false;
-    private boolean bgCollideX = false;
-    private boolean bgCollideY = false;
-
     //angle that the enemy is moving towards vars
     private float angle;
     private Matrix matrix = new Matrix();
-
-    //enemy attributes
-    private int health;
-
 
     //init constructor
     public Enemy(Bitmap res, int width, int height, int numFrames) {
@@ -67,39 +59,14 @@ public class Enemy extends GameObject {
     public void update() {
         if (isAlive) {
             animation.update();
-            if(!isCollideX)
-                x += dx;
-            if(!isCollideY)
-                y += dy;
+            if(!isCollideX)x += dx;
+            if(!isCollideY)y += dy;
+            if(health <= 0)isAlive = false;
         }
     }
 
     //allows public access to angle of player
     public void setAngle(float angle) {
         this.angle = angle;
-    }
-
-    public boolean isCollide() {
-        return isCollide;
-    }
-
-    public void setIsCollide(boolean isCollide) {
-        this.isCollide = isCollide;
-    }
-
-    public boolean isBgCollideY() {
-        return bgCollideY;
-    }
-
-    public void setBgCollideY(boolean bgCollideY) {
-        this.bgCollideY = bgCollideY;
-    }
-
-    public boolean isBgCollideX() {
-        return bgCollideX;
-    }
-
-    public void setBgCollideX(boolean bgCollideX) {
-        this.bgCollideX = bgCollideX;
     }
 }

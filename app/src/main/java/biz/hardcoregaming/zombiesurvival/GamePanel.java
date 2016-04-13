@@ -146,13 +146,26 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
         //bg2.update();
         bg.update();
         base.update();
-        System.out.println("E: " + enemy.getX() + ":" + enemy.getY() + " P: " + player.getX() + ":" + player.getY());
+
+        System.out.println("E: " + enemy.getX() + bg.getBgX() + ":" + enemy.getY() + bg.getBgX() + " P: " + player.getX() + bg.getBgX() + ":" + player.getY() + bg.getBgY());
+
         enemy.setAngle(getAngle(enemy.getX() + bg.getBgX(), enemy.getY() + bg.getBgX(), player.getX() + bg.getBgX(), player.getY() + bg.getBgY()));
         enemy.update();
 
         if (bg.getSpeedX() != 0 || bg.getSpeedY() != 0)
             player.update();//stops the player sprite frames from transitioning while player not moving
-        if(bullet != null)bullet.update();
+        if(bullet != null) {
+            isCollide();
+            bullet.update();
+        }
+    }
+
+    public void isCollide(){
+        if (bullet.getRectangle().intersect(enemy.getRectangle())){
+            System.out.println("Collide");
+            bullet.setActive(false);
+            enemy.setHealth(-50);
+        }
     }
 
     @Override
@@ -230,7 +243,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                 bg.setIsCollideX(true);
                 base.setIsCollideX(true);
 
-                enemy.setBgCollideX(true);
+                enemy.setIsCollideX(true);
 
                 bg.setSpeedX(0);
                 base.setDx(0);
@@ -241,7 +254,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                 bg.setIsCollideX(true);
                 base.setIsCollideX(true);
 
-                enemy.setBgCollideX(true);
+                enemy.setIsCollideX(true);
 
                 bg.setSpeedX(0);
                 base.setDx(0);
@@ -258,13 +271,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                 bg.setIsCollideX(false);
                 base.setIsCollideX(false);
 
-                enemy.setBgCollideX(false);
+                enemy.setIsCollideX(false);
             }else if(bgX < 0 && speedX > 0){//player moving right
                 player.setIsCollideX(false);
                 bg.setIsCollideX(false);
                 base.setIsCollideX(false);
 
-                enemy.setBgCollideX(false);
+                enemy.setIsCollideX(false);
             }else {
                 //set background speed to 0 if collide true
                 player.setDx(0);
@@ -283,7 +296,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                 bg.setIsCollideY(true);
                 base.setIsCollideY(true);
 
-                enemy.setBgCollideY(true);
+                enemy.setIsCollideY(true);
 
                 player.setDy(0);
                 bg.setSpeedY(0);
@@ -300,13 +313,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                 bg.setIsCollideY(false);
                 base.setIsCollideY(false);
 
-                enemy.setBgCollideY(false);
+                enemy.setIsCollideY(false);
             }else if(bgY < 0 && speedY > 0){
                 player.setIsCollideY(false);
                 bg.setIsCollideY(false);
                 base.setIsCollideY(false);
 
-                enemy.setBgCollideY(false);
+                enemy.setIsCollideY(false);
             }else {
                 //set background speed to 0 if collide true
                 player.setDy(0);
