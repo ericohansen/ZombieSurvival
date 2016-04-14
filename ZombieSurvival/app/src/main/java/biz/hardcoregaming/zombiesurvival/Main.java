@@ -26,7 +26,11 @@ public class Main extends Activity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         //hide soft key menu buttons
+<<<<<<< HEAD
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+=======
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
     }
 
     @Override

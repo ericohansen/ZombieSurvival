@@ -3,7 +3,13 @@ package biz.hardcoregaming.zombiesurvival;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+<<<<<<< HEAD
+import android.graphics.Matrix;
 import android.graphics.Point;
+import android.graphics.Rect;
+=======
+import android.graphics.Point;
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -29,6 +35,20 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
     public boolean isBgMove = true;
     public int speedX, speedY, moveSpeed = 10;
 
+<<<<<<< HEAD
+    //Game information
+    public int waveNumber = 1;
+
+    //Map Objects
+    public int numEnemyOnMap = 5;
+
+    //public List<Enemy> EnemyCollection;
+    private Enemy[] enemyList = new Enemy[waveNumber*10];
+
+    //Projectile information
+    public Projectile bullet = new Projectile();
+    private Matrix matrix = new Matrix();
+=======
     //Map Objects
     public int numEnemyOnMap = 5;
     //public List<Enemy> EnemyCollection;
@@ -36,6 +56,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
 
     //Projectile information
     public Projectile bullet = new Projectile();
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
 
     //Player information
     public Player player;
@@ -43,8 +64,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
     //Base information
     private Base base;
 
+<<<<<<< HEAD
+=======
     //Game information
     public int waveNumber = 1;
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
 
     public GamePanel(Context context) {
         super(context);
@@ -77,11 +101,24 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
         //bg2.draw(canvas);
         bg.draw(canvas);
         base.draw(canvas);
+<<<<<<< HEAD
+        player.draw(canvas);
+
+        for(Enemy enemy : enemyList)
+            if(enemy.isAlive)
+                enemy.draw(canvas);
+
+        //draw enemy list
+        if(bullet != null)
+            if(bullet.isActive())bullet.draw(canvas);
+
+=======
         enemy.draw(canvas);
         //draw enemy list
         if(bullet != null)
             if(bullet.isActive())bullet.draw(canvas);
         player.draw(canvas);
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
     }
 
     @Override
@@ -90,7 +127,22 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
         //creates the player and background objects
         player = new Player(BitmapFactory.decodeResource(getResources(), R.drawable.playersquare), 200, 200, 3);
         //bg2 = new Background(BitmapFactory.decodeResource(getResources(), R.drawable.treebackground), -1500, -1000);
+<<<<<<< HEAD
+
+        for(int i = 0; i < waveNumber*10; i++){
+            //creates enemy object with a different sprite
+            if(i % 3 == 0) {
+                enemyList[i] = new Enemy(BitmapFactory.decodeResource(getResources(), R.drawable.zombiesprite1), 200, 200, 4, 100, 5);
+            }else if(i % 3 == 1){
+                enemyList[i] = new Enemy(BitmapFactory.decodeResource(getResources(), R.drawable.zombiesprite2), 64, 64, 8, 100, 5);
+            }else{
+                enemyList[i] = new Enemy(BitmapFactory.decodeResource(getResources(), R.drawable.zombiesprite3), 200, 200, 4, 100, 5);
+            }
+        }
+
+=======
         enemy = new Enemy(BitmapFactory.decodeResource(getResources(), R.drawable.zombiesprite3), 200, 200, 4);
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
 
         bg = new Background(0, 0);
         base = new Base(bg.getX() + 800, bg.getY() + 800, 100, 1, 400, 400);
@@ -128,12 +180,22 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
         player.setAngle(getAngle(screenWidth / 2, screenHeight / 2, (int) event.getX(), (int)event.getY()));
         //System.out.println(player.getAngle());
         if(bullet != null) {
+<<<<<<< HEAD
+            if (!bullet.isActive()) {
+                bullet = new Projectile(50, 500, 20, player.getAngle(), BitmapFactory.decodeResource(getResources(), R.drawable.gunfire));
+            }
+        }else{
+            bullet = null;
+        }
+
+=======
             //System.out.println("Not Null");
             if (!bullet.isActive()) {
                 bullet = new Projectile(2, 2, 300, 10, player.getAngle() - 90);
                 //System.out.println("Is Active");
             }
         }
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
         //System.out.println("NULL");
         return super.onTouchEvent(event);
     }
@@ -147,10 +209,19 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
         bg.update();
         base.update();
 
+<<<<<<< HEAD
+        //System.out.println("E X: " + enemy.getX() + " Y:" + enemy.getY() + " P X: " + (player.getX() + bg.getBgX()) + " Y:" + (player.getY() + bg.getBgY()));
+        for(Enemy enemy : enemyList)
+            if(enemy.isAlive) {
+                enemy.setAngle(getAngle(enemy.getX(), enemy.getY(), player.getX() + bg.getBgX(), player.getY() + bg.getBgY()));
+                enemy.update();
+            }
+=======
         System.out.println("E: " + enemy.getX() + bg.getBgX() + ":" + enemy.getY() + bg.getBgX() + " P: " + player.getX() + bg.getBgX() + ":" + player.getY() + bg.getBgY());
 
         enemy.setAngle(getAngle(enemy.getX() + bg.getBgX(), enemy.getY() + bg.getBgX(), player.getX() + bg.getBgX(), player.getY() + bg.getBgY()));
         enemy.update();
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
 
         if (bg.getSpeedX() != 0 || bg.getSpeedY() != 0)
             player.update();//stops the player sprite frames from transitioning while player not moving
@@ -161,11 +232,26 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
     }
 
     public void isCollide(){
+<<<<<<< HEAD
+        for(Enemy enemy : enemyList)
+            if(enemy.isAlive) {
+                Rect eRect = new Rect(enemy.x, enemy.y, enemy.x + enemy.width, enemy.y + enemy.height);
+                Rect bRect = new Rect(bullet.getX(), bullet.getY(), bullet.getX() + 2, bullet.getY() + 2);
+                //System.out.println("Bullet: " + bRect + " Enemy: " + eRect);
+                if (bRect.intersect(eRect)) {
+                    //System.out.println("Collide");
+                    //System.out.println("Health: " + enemy.getHealth() + " " + bullet.getDamage());
+                    bullet.setActive(false);
+                    enemy.setHealth(bullet.getDamage());
+                }
+            }
+=======
         if (bullet.getRectangle().intersect(enemy.getRectangle())){
             System.out.println("Collide");
             bullet.setActive(false);
             enemy.setHealth(-50);
         }
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
     }
 
     @Override
@@ -243,24 +329,42 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                 bg.setIsCollideX(true);
                 base.setIsCollideX(true);
 
+<<<<<<< HEAD
+                //enemy.setIsCollideX(true);
+=======
                 enemy.setIsCollideX(true);
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
 
                 bg.setSpeedX(0);
                 base.setDx(0);
 
+<<<<<<< HEAD
+                //enemy.setDx(0);
+=======
                 enemy.setDx(0);
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
             }else if(bgX + speedX >= centerX + playerMidX) {
                 player.setIsCollideX(true);
                 bg.setIsCollideX(true);
                 base.setIsCollideX(true);
 
+<<<<<<< HEAD
+                for(Enemy enemy : enemyList)
+                    enemy.setIsCollideX(true);
+=======
                 enemy.setIsCollideX(true);
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
 
                 bg.setSpeedX(0);
                 base.setDx(0);
                 player.setDx(0);
 
+<<<<<<< HEAD
+                for(Enemy enemy : enemyList)
+                    enemy.setDx(0);
+=======
                 enemy.setDx(0);
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
             }
         }
 
@@ -271,20 +375,36 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                 bg.setIsCollideX(false);
                 base.setIsCollideX(false);
 
+<<<<<<< HEAD
+                for(Enemy enemy : enemyList)
+                    enemy.setIsCollideX(false);
+
+=======
                 enemy.setIsCollideX(false);
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
             }else if(bgX < 0 && speedX > 0){//player moving right
                 player.setIsCollideX(false);
                 bg.setIsCollideX(false);
                 base.setIsCollideX(false);
 
+<<<<<<< HEAD
+                for(Enemy enemy : enemyList)
+                    enemy.setIsCollideX(false);
+=======
                 enemy.setIsCollideX(false);
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
             }else {
                 //set background speed to 0 if collide true
                 player.setDx(0);
                 bg.setSpeedX(0);
                 base.setDx(0);
 
+<<<<<<< HEAD
+                for(Enemy enemy : enemyList)
+                    enemy.setDx(0);
+=======
                 enemy.setDx(0);
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
             }
 
         }
@@ -296,13 +416,23 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                 bg.setIsCollideY(true);
                 base.setIsCollideY(true);
 
+<<<<<<< HEAD
+                for(Enemy enemy : enemyList)
+                    enemy.setIsCollideY(true);
+=======
                 enemy.setIsCollideY(true);
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
 
                 player.setDy(0);
                 bg.setSpeedY(0);
                 base.setDy(0);
 
+<<<<<<< HEAD
+                for(Enemy enemy : enemyList)
+                    enemy.setDy(0);
+=======
                 enemy.setDy(0);
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
             }
         }
 
@@ -313,20 +443,35 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                 bg.setIsCollideY(false);
                 base.setIsCollideY(false);
 
+<<<<<<< HEAD
+                for(Enemy enemy : enemyList)
+                    enemy.setIsCollideY(false);
+=======
                 enemy.setIsCollideY(false);
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
             }else if(bgY < 0 && speedY > 0){
                 player.setIsCollideY(false);
                 bg.setIsCollideY(false);
                 base.setIsCollideY(false);
 
+<<<<<<< HEAD
+                for(Enemy enemy : enemyList)
+                    enemy.setIsCollideY(false);
+=======
                 enemy.setIsCollideY(false);
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
             }else {
                 //set background speed to 0 if collide true
                 player.setDy(0);
                 bg.setSpeedY(0);
                 base.setDy(0);
 
+<<<<<<< HEAD
+                for(Enemy enemy : enemyList)
+                    enemy.setDy(0);
+=======
                 enemy.setDy(0);
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
             }
         }
     }
@@ -345,9 +490,18 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                 //set player x y speeds
                 player.setDx(0);
                 player.setDy(0);
+<<<<<<< HEAD
+
+                //set enemy x y speeds
+                for(Enemy enemy : enemyList) {
+                    enemy.setDx(0);
+                    enemy.setDy(0);
+                }
+=======
                 //set enemy x y speeds
                 enemy.setDx(0);
                 enemy.setDy(0);
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
 
             } else {//else speedX or speedY doesn't equal 0
                 //check for change in speed x
@@ -357,13 +511,23 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                     base.setDx(speedX);
                     player.setDx(-speedX);
 
+<<<<<<< HEAD
+                    for(Enemy enemy : enemyList)
+                        enemy.setDx(speedX);
+=======
                     enemy.setDx(speedX);
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
                 } else {
                     bg.setSpeedX(0);
                     base.setDx(0);
                     player.setDx(0);
 
+<<<<<<< HEAD
+                    for(Enemy enemy : enemyList)
+                        enemy.setDx(0);
+=======
                     enemy.setDx(0);
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
                 }
 
                 //check for change in speed y
@@ -372,13 +536,23 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                     base.setDy(speedY);
                     player.setDy(-speedY);
 
+<<<<<<< HEAD
+                    for(Enemy enemy : enemyList)
+                        enemy.setDy(speedY);
+=======
                     enemy.setDy(speedY);
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
                 } else {
                     bg.setSpeedY(0);
                     base.setDy(0);
                     player.setDy(0);
 
+<<<<<<< HEAD
+                    for(Enemy enemy : enemyList)
+                        enemy.setDy(0);
+=======
                     enemy.setDy(0);
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
                 }
             }
         }

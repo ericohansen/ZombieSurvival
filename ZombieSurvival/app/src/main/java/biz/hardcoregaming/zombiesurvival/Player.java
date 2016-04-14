@@ -10,9 +10,14 @@ public class Player extends GameObject {
     private Bitmap spritesheet;
     private Animation animation = new Animation();
 
+<<<<<<< HEAD
+    private int trueX;
+    private int trueY;
+=======
     //position of player on screen vars
     private int x;
     private int y;
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
 
     private boolean isCollide = false;
 
@@ -30,9 +35,16 @@ public class Player extends GameObject {
     //init constructor
     public Player(Bitmap res, int width, int height, int numFrames) {
         spritesheet = res;
+<<<<<<< HEAD
+        this.x = (GamePanel.screenWidth / 2) - (width / 2);
+        this.y = (GamePanel.screenHeight / 2) - (height / 2);
+        trueX = x;
+        trueY = y;
+=======
         x = (GamePanel.screenWidth / 2) - (width / 2);
         y = (GamePanel.screenHeight / 2) - (height / 2);
 
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
         Bitmap[] image = new Bitmap[numFrames];
 
         //creates the sprite frames for animations
@@ -56,11 +68,17 @@ public class Player extends GameObject {
 
     //updates the sprite image and x y of player if changed
     public void update() {
+<<<<<<< HEAD
+        if (!isCollideX)trueX += dx;
+        if (!isCollideY)trueY += dy;
+        animation.update();
+=======
         if (!isCollide) {
             animation.update();
             x += dx;
             y += dy;
         }
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
     }
 
     //allows public access to angle of player
@@ -79,4 +97,13 @@ public class Player extends GameObject {
     public void setIsCollide(boolean isCollide) {
         this.isCollide = isCollide;
     }
+<<<<<<< HEAD
+
+    @Override
+    public int getX(){return trueX;}
+
+    @Override
+    public int getY(){return trueY;}
+=======
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
 }

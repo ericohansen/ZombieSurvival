@@ -13,6 +13,12 @@
 
     </android.support.design.widget.AppBarLayout>
 
+<<<<<<< HEAD
+    <include layout="@layout/content_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+=======
     <include layout="@layout/content_main" />
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
 
 </android.support.design.widget.CoordinatorLayout>

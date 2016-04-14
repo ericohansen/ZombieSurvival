@@ -12,6 +12,13 @@ public abstract class GameObject {
     protected int dx;
     protected int width;
     protected int height;
+<<<<<<< HEAD
+    protected boolean isCollideX = false;
+    protected boolean isCollideY = false;
+    protected boolean isAlive = true;
+    protected int health = 100;
+=======
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
 
     public Rect getRectangle() {
         return new Rect(x, y, x + width, y + height);
@@ -64,4 +71,39 @@ public abstract class GameObject {
     public void setHeight(int height) {
         this.height = height;
     }
+<<<<<<< HEAD
+
+    public boolean isCollideY() {
+        return isCollideY;
+    }
+
+    public void setIsCollideY(boolean isCollideY) {
+        this.isCollideY = isCollideY;
+    }
+
+    public boolean isCollideX() {
+        return isCollideX;
+    }
+
+    public void setIsCollideX(boolean isCollideX) {
+        this.isCollideX = isCollideX;
+    }
+
+    public boolean isAlive() {
+        return isAlive;
+    }
+
+    public void setIsAlive(boolean isAlive) {
+        this.isAlive = isAlive;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public void setHealth(int health) {
+        this.health += health;
+    }
+=======
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
 }

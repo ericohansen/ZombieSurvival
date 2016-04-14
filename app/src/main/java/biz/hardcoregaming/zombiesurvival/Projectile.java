@@ -1,7 +1,14 @@
 package biz.hardcoregaming.zombiesurvival;
 
+<<<<<<< HEAD
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
+=======
+import android.graphics.Canvas;
+import android.graphics.Color;
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
 import android.graphics.Paint;
 
 /**
@@ -14,6 +21,12 @@ public class Projectile extends GameObject {
     private float angle;
     private boolean isActive = false;
     private int width, height;
+<<<<<<< HEAD
+    private Matrix matrix = new Matrix();
+    private Bitmap image;
+    private int xOffset = 0, yOffset = -300;
+=======
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
 
     public Projectile(int width, int height, int speed, int damage, float angle){
         x = GamePanel.screenWidth/2;
@@ -27,9 +40,29 @@ public class Projectile extends GameObject {
         setMoveAngleBools();
     }
 
+<<<<<<< HEAD
+    public Projectile(int width, int height, int damage, float angle, Bitmap res){
+        this.width = width;
+        this.height = height;
+        this.damage = damage;
+        this.angle = angle;
+
+        x = (GamePanel.screenWidth/2) + xOffset;
+        y = (GamePanel.screenHeight/2) + yOffset;
+
+        isActive = true;
+
+        image = res;
+    }
+
+    public Projectile(){
+        x = (GamePanel.screenWidth/2);
+        y = (GamePanel.screenHeight/2);
+=======
     public Projectile(){
         x = GamePanel.screenWidth/2;
         y = GamePanel.screenHeight/2;
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
         this.width = 2;
         this.height = 2;
         isActive = false;
@@ -42,10 +75,21 @@ public class Projectile extends GameObject {
     }
 
     public void draw(Canvas canvas){
+<<<<<<< HEAD
+        //Paint paint = new Paint();
+        //paint.setColor(Color.WHITE);
+       // paint.setStyle(Paint.Style.FILL);
+        //canvas.drawCircle(x, y, 20, paint);
+        matrix.reset();
+        matrix.postRotate(angle, image.getWidth()/2, image.getHeight());
+        matrix.postTranslate((GamePanel.screenWidth/2), (GamePanel.screenHeight/2));
+        canvas.drawBitmap(image, matrix, null);
+=======
         Paint paint = new Paint();
         paint.setColor(Color.WHITE);
         paint.setStyle(Paint.Style.FILL);
         canvas.drawCircle(x, y, 2, paint);
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
     }
 
     public void update(){
@@ -69,4 +113,11 @@ public class Projectile extends GameObject {
         return damage;
     }
 
+<<<<<<< HEAD
+    public int getX(){ return x; }
+
+    public int getY(){ return y; }
+
+=======
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
 }

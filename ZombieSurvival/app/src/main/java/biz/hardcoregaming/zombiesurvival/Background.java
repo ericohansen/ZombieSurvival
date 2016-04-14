@@ -2,6 +2,28 @@ package biz.hardcoregaming.zombiesurvival;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+<<<<<<< HEAD
+import android.graphics.Color;
+import android.graphics.Paint;
+
+public class Background extends GameObject {
+
+    private int bgX, bgY, speedX, speedY;
+    private Paint paint = new Paint();
+
+    //constructor
+    public Background(int x, int y) {
+        bgX = x;
+        bgY = y;
+        speedX = 0;
+        speedY = 0;
+        paint.setColor(Color.DKGRAY);
+        paint.setStyle(Paint.Style.FILL);
+    }
+
+    public void draw(Canvas canvas) {
+        canvas.drawRect(bgX,bgY,bgX + 2000, bgY + 2000, paint);
+=======
 
 public class Background extends GameObject {
 
@@ -26,6 +48,7 @@ public class Background extends GameObject {
 
     public void draw(Canvas canvas) {
         canvas.drawBitmap(image, bgX, bgY, null);
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
     }
 
     public void update() {
@@ -66,6 +89,8 @@ public class Background extends GameObject {
     public void setSpeedY(int speedY) {
         this.speedY = speedY;
     }
+<<<<<<< HEAD
+=======
 
     public int getBgWidth() {
         return bgWidth;
@@ -130,4 +155,5 @@ public class Background extends GameObject {
     public void setOrigYHeight(int origYHeight) {
         this.origYHeight = origYHeight;
     }
+>>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
 }
