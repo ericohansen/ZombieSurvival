@@ -16,7 +16,6 @@ public class Enemy extends GameObject {
 
     //angle that the enemy is moving towards vars
     private float angle;
-<<<<<<< HEAD
     private int speed = 3;
     private Matrix matrix = new Matrix();
 
@@ -48,24 +47,6 @@ public class Enemy extends GameObject {
             this.x = r.nextInt(maxW - min) + min;
             this.y = -10;
         }
-=======
-    private Matrix matrix = new Matrix();
-
-    //init constructor
-    public Enemy(Bitmap res, int width, int height, int numFrames) {
-        spritesheet = res;
-        int min = 50;
-        int max = GamePanel.screenHeight - 50;
-
-        Random r = new Random();
-        int randY = r.nextInt(max - min + 1) + min;
-        if(randY > GamePanel.screenHeight/2){
-            this.x = 10;
-        }else{
-            this.x = GamePanel.screenWidth - 10;
-        }
-        this.y = randY;
->>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
 
         Bitmap[] image = new Bitmap[numFrames];
 
@@ -93,13 +74,9 @@ public class Enemy extends GameObject {
     public void update() {
         if (isAlive) {
             animation.update();
-<<<<<<< HEAD
             if(!isCollideX)x += Math.cos(angle)*speed + dx;
             if(!isCollideY)y += Math.sin(angle)*speed + dy;
-=======
-            if(!isCollideX)x += dx;
-            if(!isCollideY)y += dy;
->>>>>>> 437587f7a302ce85f0ac8ae9d083e49127ddf46b
+
             if(health <= 0)isAlive = false;
         }
     }
