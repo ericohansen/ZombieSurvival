@@ -5,6 +5,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.hardware.Camera;
 
 /**
  * Created by ericohansen on 2/27/2016.
@@ -17,6 +19,7 @@ public class Projectile extends GameObject {
     private boolean isActive = false;
     private int width, height;
     private Matrix matrix = new Matrix();
+    private Rect rotRect;
     private Bitmap image;
     private int xOffset = 0, yOffset = 0;
 
@@ -38,8 +41,8 @@ public class Projectile extends GameObject {
         this.damage = damage;
         this.angle = angle;
 
-        x = (GamePanel.screenWidth/2) + xOffset;
-        y = (GamePanel.screenHeight/2) + yOffset;
+        x = (GamePanel.screenWidth/2) - (width/2) + xOffset;
+        y = (GamePanel.screenHeight/2) - (height) + yOffset;
 
         isActive = true;
 
@@ -68,7 +71,29 @@ public class Projectile extends GameObject {
         matrix.reset();
         matrix.postRotate(angle, image.getWidth()/2, image.getHeight());
         matrix.postTranslate((GamePanel.screenWidth/2), (GamePanel.screenHeight/2));
+        System.out.println("X: " + x + " Y: " + y + " W: " + (x + width) + " H: " + (y + height));
         canvas.drawBitmap(image, matrix, null);
+
+        Paint p = new Paint();
+        p.setColor(Color.GREEN);
+
+        canvas.save();
+        canvas.rotate(angle, (x+width)/2, y+height);
+        canvas.drawRect(new Rect(x,y,x+width,y+height),p);
+        rotRect = new Rect(x,y,x+width,y+height);
+        canvas.restore();
+    }
+
+    public Rect getRotRect(){
+        float[] pts = new float[4];
+        pts[0] = rotRect.left;
+        pts[1] = rotRect.top;
+        pts[2] = pts[0] + width;
+        pts[3] = pts[1] + height;
+        matrix.mapPoints(pts);
+        if(rotRect != null)
+            return new Rect((int)pts[0], (int)pts[1], (int)pts[2], (int)pts[3]);
+        return null;
     }
 
     public void update(){
