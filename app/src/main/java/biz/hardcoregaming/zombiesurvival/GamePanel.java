@@ -3,7 +3,9 @@ package biz.hardcoregaming.zombiesurvival;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.hardware.Sensor;
@@ -82,6 +84,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
         bg.draw(canvas);
         base.draw(canvas);
         player.draw(canvas);
+        Paint paint = new Paint();
+
+        paint.setColor(Color.WHITE);
+        paint.setTextSize(30);
+        canvas.drawText("Score: " + player.getScore(), 10, 25, paint);
+        canvas.drawText("Health: " + player.getHealth(),10,55,paint);
+        canvas.drawText("Wave #: " + waveNumber,10,85,paint);
 
         for(Enemy enemy : enemyList)
             if(enemy.isAlive)
@@ -182,6 +191,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
             isCollide();
             bullet.update();
         }
+        enemyPlayerCollide();
     }
 
     public void isCollide(){
@@ -190,6 +200,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                 if(enemy.isAlive) {
                     Rect eRect = new Rect(enemy.x, enemy.y, enemy.x + enemy.width, enemy.y + enemy.height);
                     Rect bRect = bullet.getRotRect();//new Rect(bullet.getX(), bullet.getY(), bullet.getX() + bullet.getWidth(), bullet.getY() + bullet.getHeight()*3);
+                    Rect pRect = new Rect(player.x,player.y, player.x+player.width,player.y+player.height);
                     //System.out.println("Bullet: " + bRect + " Enemy: " + eRect);
                     if (bRect.intersect(eRect)) {
                         System.out.println("Collide");
@@ -197,9 +208,23 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                         bullet.setActive(false);
                         enemy.setHealth(bullet.getDamage());
                     }
+
                 }
     }
 
+    public void enemyPlayerCollide(){
+        Rect pRect = new Rect(player.x, player.y, player.x + player.width, player.y + player.height);
+        for(Enemy enemy : enemyList) {
+            if (enemy.isAlive) {
+                Rect eRect = new Rect(enemy.x, enemy.y, enemy.x + enemy.width, enemy.y + enemy.height);
+
+                if (pRect.intersect(eRect)) {
+                    player.changeHealth(-10);
+
+                }
+            }
+        }
+    }
     @Override
     public void onSensorChanged(SensorEvent event) {
 

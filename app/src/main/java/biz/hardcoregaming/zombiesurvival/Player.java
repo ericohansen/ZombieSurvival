@@ -24,6 +24,7 @@ public class Player extends GameObject {
     private int numWeapons;
     private int weapon;
     private boolean isSafe = false;
+    private int score;
 
 
     //init constructor
@@ -34,7 +35,7 @@ public class Player extends GameObject {
         trueX = x;
         trueY = y;
         Bitmap[] image = new Bitmap[numFrames];
-
+        score = 0;
         //creates the sprite frames for animations
         for (int i = 0; i < numFrames; i++) {
             System.out.println("W: " + i * width + " H: " + height);
@@ -78,6 +79,9 @@ public class Player extends GameObject {
         this.isCollide = isCollide;
     }
 
+    public int getScore(){return score;}
+    public void addScore(int amount){score+=amount;}
+    public void changeHealth(int amount){health+=amount;}
     @Override
     public int getX(){return trueX;}
 
