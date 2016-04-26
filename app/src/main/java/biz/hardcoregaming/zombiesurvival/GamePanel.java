@@ -86,7 +86,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
         for(Enemy enemy : enemyList)
             if(enemy.isAlive)
                 enemy.draw(canvas);
-        
+
         if(bullet != null) {
             if (bullet.isActive()) bullet.draw(canvas);
             bullet.setActive(false);
