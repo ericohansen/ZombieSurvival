@@ -199,7 +199,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
             for(Enemy enemy : enemyList)
                 if(enemy.isAlive) {
                     Rect eRect = new Rect(enemy.x, enemy.y, enemy.x + enemy.width, enemy.y + enemy.height);
-                    Rect bRect = bullet.getRotRect();//new Rect(bullet.getX(), bullet.getY(), bullet.getX() + bullet.getWidth(), bullet.getY() + bullet.getHeight()*3);
+                    Rect bRect = new Rect(bullet.getX(), bullet.getY(), bullet.getX() + bullet.getWidth(), bullet.getY() + bullet.getHeight()*3);//bullet.getRotRect();
                     Rect pRect = new Rect(player.x,player.y, player.x+player.width,player.y+player.height);
                     //System.out.println("Bullet: " + bRect + " Enemy: " + eRect);
                     if (bRect.intersect(eRect)) {

@@ -41,8 +41,8 @@ public class Projectile extends GameObject {
         this.damage = damage;
         this.angle = angle;
 
-        x = (GamePanel.screenWidth/2) - (width/2) + xOffset;
-        y = (GamePanel.screenHeight/2) - (height) + yOffset;
+        x = (GamePanel.screenWidth/2)  + xOffset;
+        y = (GamePanel.screenHeight/2) + yOffset;
 
         isActive = true;
 
@@ -69,31 +69,28 @@ public class Projectile extends GameObject {
        // paint.setStyle(Paint.Style.FILL);
         //canvas.drawCircle(x, y, 20, paint);
         matrix.reset();
-        matrix.postRotate(angle, image.getWidth()/2, image.getHeight());
-        matrix.postTranslate((GamePanel.screenWidth/2), (GamePanel.screenHeight/2));
+        matrix.postRotate(angle, (width), height);
+
+        matrix.postTranslate(x-width, y-height);
         System.out.println("X: " + x + " Y: " + y + " W: " + (x + width) + " H: " + (y + height));
         canvas.drawBitmap(image, matrix, null);
 
         Paint p = new Paint();
         p.setColor(Color.GREEN);
-
+        canvas.drawCircle(x, y, 3, p);
         canvas.save();
-        canvas.rotate(angle, (x+width)/2, y+height);
-        canvas.drawRect(new Rect(x,y,x+width,y+height),p);
+        canvas.rotate(angle, x+(width/2), y+height);
+        //canvas.drawRect(new Rect(x,y,x+width,y+height),p);
         rotRect = new Rect(x,y,x+width,y+height);
+        System.out.println(rotRect);
         canvas.restore();
+        System.out.println(rotRect);
     }
 
-    public Rect getRotRect(){
-        float[] pts = new float[4];
-        pts[0] = rotRect.left;
-        pts[1] = rotRect.top;
-        pts[2] = pts[0] + width;
-        pts[3] = pts[1] + height;
+    public float[] getRotRect(){
+        float[] pts = new float[2];
         matrix.mapPoints(pts);
-        if(rotRect != null)
-            return new Rect((int)pts[0], (int)pts[1], (int)pts[2], (int)pts[3]);
-        return null;
+        return pts;
     }
 
     public void update(){
