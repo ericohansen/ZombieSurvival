@@ -199,14 +199,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
             for(Enemy enemy : enemyList)
                 if(enemy.isAlive) {
                     Rect eRect = new Rect(enemy.x, enemy.y, enemy.x + enemy.width, enemy.y + enemy.height);
-                    Rect bRect = new Rect(bullet.getX(), bullet.getY(), bullet.getX() + bullet.getWidth(), bullet.getY() + bullet.getHeight()*3);//bullet.getRotRect();
+                    float[] bRect = bullet.getRotRect(); //;new Rect(bullet.getX(), bullet.getY(), bullet.getX() + bullet.getWidth(), bullet.getY() + bullet.getHeight()*3);
                     Rect pRect = new Rect(player.x,player.y, player.x+player.width,player.y+player.height);
-                    //System.out.println("Bullet: " + bRect + " Enemy: " + eRect);
-                    if (bRect.intersect(eRect)) {
-                        System.out.println("Collide");
+                    System.out.println("Bullet: " + bRect + " Enemy: " + eRect);
+                    if (eRect.intersect(pRect)) {
+                        System.out.println("Collide with player");
                         //System.out.println("Health: " + enemy.getHealth() + " " + bullet.getDamage());
-                        bullet.setActive(false);
-                        enemy.setHealth(bullet.getDamage());
+                        player.setHealth(enemy.getDamage());
                     }
 
                 }
@@ -219,8 +218,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                 Rect eRect = new Rect(enemy.x, enemy.y, enemy.x + enemy.width, enemy.y + enemy.height);
 
                 if (pRect.intersect(eRect)) {
-                    player.changeHealth(-10);
-
+                    player.changeHealth(enemy.getDamage());
                 }
             }
         }

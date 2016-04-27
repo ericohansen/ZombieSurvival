@@ -18,6 +18,7 @@ public class Enemy extends GameObject {
     private float angle;
     private int speed = 3;
     private Matrix matrix = new Matrix();
+    private int damage = 10;
 
     //init constructor
     public Enemy(Bitmap res, int width, int height, int numFrames, int health, int speed) {
@@ -85,4 +86,6 @@ public class Enemy extends GameObject {
     public void setAngle(float angle) {
         this.angle = angle;
     }
+
+    public int getDamage(){ return damage;}
 }
