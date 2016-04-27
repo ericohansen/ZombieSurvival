@@ -72,12 +72,16 @@ public class Projectile extends GameObject {
         matrix.postRotate(angle, (width), height);
 
         matrix.postTranslate(x-width, y-height);
+        float[] pts = new float[2];
+        matrix.getValues(pts);
+        System.out.println(matrix);
         System.out.println("X: " + x + " Y: " + y + " W: " + (x + width) + " H: " + (y + height));
         canvas.drawBitmap(image, matrix, null);
 
         Paint p = new Paint();
         p.setColor(Color.GREEN);
         canvas.drawCircle(x, y, 3, p);
+        canvas.drawCircle(pts[0], pts[1], 3, p);
         canvas.save();
         canvas.rotate(angle, x+(width/2), y+height);
         //canvas.drawRect(new Rect(x,y,x+width,y+height),p);
