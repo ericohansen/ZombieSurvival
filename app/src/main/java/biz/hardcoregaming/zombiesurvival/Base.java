@@ -1,5 +1,6 @@
 package biz.hardcoregaming.zombiesurvival;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -16,7 +17,7 @@ public class Base extends GameObject {
     private int height = 400;
     private Paint paint = new Paint();
 
-    public Base(int x, int y, int health, int level) {
+    public Base(int x, int y, int health, int level, Bitmap image) {
         this.x = x;
         this.y = y;
         this.health = health;
@@ -25,9 +26,10 @@ public class Base extends GameObject {
         paint.setStyle(Paint.Style.FILL);
         dx = 0;
         dy = 0;
+        this.image = image;
     }
 
-    public Base(int x, int y, int health, int level, int width, int height) {
+    public Base(int x, int y, int health, int level, int width, int height, Bitmap image) {
         this.x = x;
         this.y = y;
         this.health = health;
@@ -38,10 +40,12 @@ public class Base extends GameObject {
         paint.setStyle(Paint.Style.FILL);
         dx = 0;
         dy = 0;
+        this.image = image;
     }
 
     public void draw(Canvas canvas){
-        canvas.drawRect(x, y, x + width, y + height, paint);
+        canvas.drawBitmap(image,x,y, null);
+        //canvas.drawRect(x, y, x + width, y + height, paint);
     }
 
     public void update(){

@@ -92,10 +92,10 @@ public class Projectile extends GameObject {
 
 
         Paint p = new Paint();
-        p.setColor(Color.GREEN);
+        p.setColor(Color.YELLOW);
         canvas.drawLine(pts[0], pts[1], pts[2], pts[3], p);
-        canvas.drawCircle((int)pts[0], (int)pts[1], 3, p);
-        canvas.drawRect(pts[0], pts[1], pts[2], pts[3], p);
+        //canvas.drawCircle((int)pts[0], (int)pts[1], 3, p);
+        //canvas.drawRect(pts[0], pts[1], pts[2], pts[3], p);
         canvas.save();
         canvas.rotate(angle, x+(width/2), y+height);
         canvas.restore();

@@ -28,25 +28,25 @@ public class Enemy extends GameObject {
         this.health = health;
         this.speed = speed;
 
-        int min = -10;
-        int maxH = GamePanel.screenHeight + 10;
-        int maxW = GamePanel.screenWidth + 10;
+        int min = -500;
+        int maxH = GamePanel.screenHeight + 500;
+        int maxW = GamePanel.screenWidth + 500;
 
         Random r = new Random();
         int side = r.nextInt(4)+1;
 
         if(side == 4) {
             this.y = r.nextInt(maxH - min) + min;
-            this.x = GamePanel.screenWidth + 10;
+            this.x = GamePanel.screenWidth + 500;
         }else if(side == 3) {
             this.x = r.nextInt(maxW - min) + min;
-            this.y = GamePanel.screenHeight + 10;
+            this.y = GamePanel.screenHeight + 500;
         }else if(side == 2){
             this.y = r.nextInt(maxH - min) + min;
-            this.x = -10;
+            this.x = -500;
         }else{
             this.x = r.nextInt(maxW - min) + min;
-            this.y = -10;
+            this.y = -500;
         }
 
         Bitmap[] image = new Bitmap[numFrames];

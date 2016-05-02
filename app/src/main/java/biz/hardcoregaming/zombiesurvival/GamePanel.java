@@ -4,9 +4,7 @@ import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -110,6 +108,17 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
         player = new Player(BitmapFactory.decodeResource(getResources(), R.drawable.playersquare), 200, 200, 3);
         //bg2 = new Background(BitmapFactory.decodeResource(getResources(), R.drawable.treebackground), -1500, -1000);
 
+        createEnemies();
+
+        bg = new Background(0, 0);
+        base = new Base(bg.getX() + 800, bg.getY() + 800, 100, 1, 400, 400, BitmapFactory.decodeResource(getResources(), R.drawable.base));
+        thread.setRunning(true);
+        thread.start();
+    }
+
+    public void createEnemies(){
+        enemyList = new Enemy[waveNumber*10];
+
         for(int i = 0; i < waveNumber*10; i++){
             //creates enemy object with a different sprite
             if(i % 3 == 0) {
@@ -120,12 +129,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                 enemyList[i] = new Enemy(BitmapFactory.decodeResource(getResources(), R.drawable.zombiesprite3), 200, 200, 4, 100, 5);
             }
         }
-
-
-        bg = new Background(0, 0);
-        base = new Base(bg.getX() + 800, bg.getY() + 800, 100, 1, 400, 400);
-        thread.setRunning(true);
-        thread.start();
     }
 
     @Override
@@ -179,37 +182,84 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
         base.update();
 
         //System.out.println("E X: " + enemy.getX() + " Y:" + enemy.getY() + " P X: " + (player.getX() + bg.getBgX()) + " Y:" + (player.getY() + bg.getBgY()));
+        boolean enemyAlive = false;
         for(Enemy enemy : enemyList)
             if(enemy.isAlive) {
                 enemy.setAngle(getAngle(enemy.getX(), enemy.getY(), player.getX() + bg.getBgX(), player.getY() + bg.getBgY()));
                 enemy.update();
+                enemyAlive = true;
             }
 
         if (bg.getSpeedX() != 0 || bg.getSpeedY() != 0)
             player.update();//stops the player sprite frames from transitioning while player not moving
+
         if(bullet != null) {
             isCollide();
             bullet.update();
         }
-        enemyPlayerCollide();
+        //enemyPlayerCollide();
+
+        if(!enemyAlive){
+            waveNumber++;
+            createEnemies();
+        }
     }
 
     public void isCollide(){
-        if(bullet.isActive())
-            for(Enemy enemy : enemyList)
-                if(enemy.isAlive) {
-                    Rect eRect = new Rect(enemy.x, enemy.y, enemy.x + enemy.width, enemy.y + enemy.height);
-                    float[] bRect = bullet.getRotRect(); //;new Rect(bullet.getX(), bullet.getY(), bullet.getX() + bullet.getWidth(), bullet.getY() + bullet.getHeight()*3);
-                    Rect pRect = new Rect(player.x,player.y, player.x+player.width,player.y+player.height);
-                    System.out.println("Bullet: " + bRect + " Enemy: " + eRect);
-                    if (eRect.intersect(pRect)) {
-                        System.out.println("Collide with player");
-                        //System.out.println("Health: " + enemy.getHealth() + " " + bullet.getDamage());
-                        player.setHealth(enemy.getDamage());
+        // player rectangle
+        Rect pRect = new Rect(player.x,player.y, player.x+player.width,player.y+player.height);
+        // projectile line x1 - 0, x2 - 2, y1 - 1, y2 - 3
+        float[] bRect = bullet.getRotRect();
+        // base rectangle
+        Rect baseRect = base.getRectangle();
+
+        for(Enemy enemy : enemyList)
+            if(enemy.isAlive) {
+                // enemy rectangle
+                Rect eRect = new Rect(enemy.x, enemy.y, enemy.x + enemy.width, enemy.y + enemy.height);
+
+                if(eRect.intersect(baseRect)){
+                    enemy.setIsCollideX(true);
+                    enemy.setIsCollideY(true);
+                }
+                if(bullet.isActive())
+                    if(LineCollideRect(bRect[0], bRect[1], bRect[2], bRect[3], enemy.x, enemy.y, enemy.x + enemy.width, enemy.y + enemy.y + enemy.height)) {
+                        //System.out.println("Line Collide with Enemy");
+                        enemy.setHealth(-bullet.getDamage());
+                        player.addScore(10);
+                        bullet.setActive(false);
                     }
 
+                if (eRect.intersect(pRect)) {
+                    System.out.println("Collide with player");
+                    //System.out.println("Health: " + enemy.getHealth() + " " + bullet.getDamage());
+                    player.setHealth(-enemy.getDamage());
                 }
+            }
     }
+
+    public boolean LineCollideRect(float x1, float y1, float x2, float y2, float minX, float minY, float maxX, float maxY) {
+        // Completely outside.
+        if ((x1 <= minX && x2 <= minX) || (y1 <= minY && y2 <= minY) || (x1 >= maxX && x2 >= maxX) || (y1 >= maxY && y2 >= maxY))
+            return false;
+
+        float m = (y2 - y1) / (x2 - x1);
+
+        float y = m * (minX - x1) + y1;
+        if (y > minY && y < maxY) return true;
+
+        y = m * (maxX - x1) + y1;
+        if (y > minY && y < maxY) return true;
+
+        float x = (minY - y1) / m + x1;
+        if (x > minX && x < maxX) return true;
+
+        x = (maxY - y1) / m + x1;
+        if (x > minX && x < maxX) return true;
+
+        return false;
+    }
+
 
     public void enemyPlayerCollide(){
         Rect pRect = new Rect(player.x, player.y, player.x + player.width, player.y + player.height);
@@ -218,11 +268,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                 Rect eRect = new Rect(enemy.x, enemy.y, enemy.x + enemy.width, enemy.y + enemy.height);
 
                 if (pRect.intersect(eRect)) {
-                    player.changeHealth(enemy.getDamage());
+                    player.changeHealth(-enemy.getDamage());
                 }
             }
         }
     }
+
     @Override
     public void onSensorChanged(SensorEvent event) {
 
@@ -298,26 +349,25 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                 bg.setIsCollideX(true);
                 base.setIsCollideX(true);
 
-                //enemy.setIsCollideX(true);
+                for(Enemy enemy : enemyList)
+                    if(enemy != null)
+                        enemy.setIsCollideX(true);
 
                 bg.setSpeedX(0);
                 base.setDx(0);
 
-                //enemy.setDx(0);
             }else if(bgX + speedX >= centerX + playerMidX) {
                 player.setIsCollideX(true);
                 bg.setIsCollideX(true);
                 base.setIsCollideX(true);
 
                 for(Enemy enemy : enemyList)
-                    enemy.setIsCollideX(true);
+                    if(enemy != null)
+                        enemy.setIsCollideX(true);
 
                 bg.setSpeedX(0);
                 base.setDx(0);
                 player.setDx(0);
-
-                for(Enemy enemy : enemyList)
-                    enemy.setDx(0);
             }
         }
 
@@ -329,7 +379,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                 base.setIsCollideX(false);
 
                 for(Enemy enemy : enemyList)
-                    enemy.setIsCollideX(false);
+                    if(enemy != null)
+                        enemy.setIsCollideX(false);
 
             }else if(bgX < 0 && speedX > 0){//player moving right
                 player.setIsCollideX(false);
@@ -337,15 +388,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                 base.setIsCollideX(false);
 
                 for(Enemy enemy : enemyList)
-                    enemy.setIsCollideX(false);
+                    if(enemy != null)
+                        enemy.setIsCollideX(false);
             }else {
                 //set background speed to 0 if collide true
                 player.setDx(0);
                 bg.setSpeedX(0);
                 base.setDx(0);
 
-                for(Enemy enemy : enemyList)
-                    enemy.setDx(0);
             }
 
         }
@@ -358,14 +408,16 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                 base.setIsCollideY(true);
 
                 for(Enemy enemy : enemyList)
-                    enemy.setIsCollideY(true);
+                    if(enemy != null)
+                        enemy.setIsCollideY(true);
 
                 player.setDy(0);
                 bg.setSpeedY(0);
                 base.setDy(0);
 
                 for(Enemy enemy : enemyList)
-                    enemy.setDy(0);
+                    if(enemy != null)
+                        enemy.setDy(0);
             }
         }
 
@@ -377,14 +429,16 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                 base.setIsCollideY(false);
 
                 for(Enemy enemy : enemyList)
-                    enemy.setIsCollideY(false);
+                    if(enemy != null)
+                        enemy.setIsCollideY(false);
             }else if(bgY < 0 && speedY > 0){
                 player.setIsCollideY(false);
                 bg.setIsCollideY(false);
                 base.setIsCollideY(false);
 
                 for(Enemy enemy : enemyList)
-                    enemy.setIsCollideY(false);
+                    if(enemy != null)
+                        enemy.setIsCollideY(false);
             }else {
                 //set background speed to 0 if collide true
                 player.setDy(0);
@@ -392,7 +446,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                 base.setDy(0);
 
                 for(Enemy enemy : enemyList)
-                    enemy.setDy(0);
+                    if(enemy != null)
+                        enemy.setDy(0);
             }
         }
     }
@@ -413,10 +468,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                 player.setDy(0);
 
                 //set enemy x y speeds
-                for(Enemy enemy : enemyList) {
-                    enemy.setDx(0);
-                    enemy.setDy(0);
-                }
+                if(enemyList != null)
+                    for(Enemy enemy : enemyList) {
+                        if(enemy != null) {
+                            enemy.setDx(0);
+                            enemy.setDy(0);
+                        }
+                    }
 
             } else {//else speedX or speedY doesn't equal 0
                 //check for change in speed x
@@ -427,14 +485,16 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                     player.setDx(-speedX);
 
                     for(Enemy enemy : enemyList)
-                        enemy.setDx(speedX);
+                        if(enemy != null)
+                            enemy.setDx(speedX);
                 } else {
                     bg.setSpeedX(0);
                     base.setDx(0);
                     player.setDx(0);
 
                     for(Enemy enemy : enemyList)
-                        enemy.setDx(0);
+                        if(enemy != null)
+                            enemy.setDx(0);
                 }
 
                 //check for change in speed y
@@ -444,14 +504,16 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback, Se
                     player.setDy(-speedY);
 
                     for(Enemy enemy : enemyList)
-                        enemy.setDy(speedY);
+                        if(enemy != null)
+                            enemy.setDy(speedY);
                 } else {
                     bg.setSpeedY(0);
                     base.setDy(0);
                     player.setDy(0);
 
                     for(Enemy enemy : enemyList)
-                        enemy.setDy(0);
+                        if(enemy != null)
+                            enemy.setDy(0);
                 }
             }
         }

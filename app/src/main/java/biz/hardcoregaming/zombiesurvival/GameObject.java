@@ -1,5 +1,6 @@
 package biz.hardcoregaming.zombiesurvival;
 
+import android.graphics.Bitmap;
 import android.graphics.Rect;
 
 /**
@@ -16,6 +17,7 @@ public abstract class GameObject {
     protected boolean isCollideY = false;
     protected boolean isAlive = true;
     protected int health = 100;
+    protected Bitmap image;
 
     public Rect getRectangle() {
         return new Rect(x, y, x + width, y + height);
