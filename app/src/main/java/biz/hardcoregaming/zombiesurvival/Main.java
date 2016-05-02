@@ -54,4 +54,9 @@ public class Main extends Activity {
         Intent gameAct = new Intent(this,GameActivity.class);
         startActivity(gameAct);
     }
+
+
+    public void exitClick(View v) {
+        System.exit(0);
+    }
 }

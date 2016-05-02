@@ -18,17 +18,31 @@
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true">
+        android:layout_alignParentEnd="true"
+        android:weightSum="1"
+        android:id="@+id/linearLayout"
+        android:layout_gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="ZOMBIE SURVIVAL"
+            android:id="@+id/textView"
+            android:singleLine="false"
+            android:textSize="@dimen/abc_text_size_display_1_material"
+            android:textAlignment="center"
+            android:foregroundGravity="center" />
 
         <Button
-            android:layout_width="369dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Start/Resume"
             android:id="@+id/btn_start"
             android:onClick="startClick" />
 
         <Button
-            android:layout_width="365dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Settings"
             android:id="@+id/btn_settings" />
@@ -37,6 +51,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Exit"
-            android:id="@+id/btn_exit" />
+            android:id="@+id/btn_exit"
+            android:onClick="exitClick" />
+
+        <ImageView
+            android:layout_width="76dp"
+            android:layout_height="match_parent"
+            android:id="@+id/imageView"
+            android:background="@mipmap/ic_launcher"
+            android:layout_gravity="center" />
+
+
     </LinearLayout>
+
 </RelativeLayout>
